@@ -1,0 +1,75 @@
+#!/usr/bin/python
+# Copyright (C) 2011  Codethink Limited
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+
+import cliapp
+import json
+import logging
+import os
+
+
+__version__ = '0.0'
+
+
+class Detritus(cliapp.Application):
+
+    def add_settings(self):
+        self.settings.string(['working-area', 'w'],
+                             'use DIR as the working area (for holding '
+                                'intermediate git repositories, etc)',
+                             metavar='DIR')
+
+    def process_args(self, args):
+        for arg in args:
+            with open(arg) as f:
+                specs = json.load(f)
+            for name in specs:
+                self.gitify(name, specs[name])
+    
+    def gitify(self, name, spec):
+        logging.info('Converting %s' % name)
+        table = {
+            'git': self.mirror_git,
+        }
+        table[spec['type']](name, spec)
+        
+    def mirror_git(self, name, spec):
+        dirname = self.dirname(name)
+        if not os.path.exists(dirname):
+            self.run_program(['git', 'clone', spec['url'], dirname])
+        else:
+            self.run_program(['git', 'pull'], cwd=dirname)
+
+    def run_program(self, argv, **kwargs):
+        exit, out, err = self.runcmd_unchecked(argv, **kwargs)
+        logging.debug('Command: %s\nExit: %s\nStdout:\n%sStderr:\n%s' % 
+                      (argv, exit, self.indent(out), self.indent(err)))
+        if exit != 0:
+            raise Exception('%s failed (exit code %s):\n%s' % 
+                                (' '.join(argv), exit, self.indent(err)))
+
+    def indent(self, string):
+        return ''.join('    %s\n' % line for line in string.splitlines())
+    
+    def dirname(self, project_name):
+        assert '/' not in project_name
+        assert '\0' not in project_name
+        return os.path.join(self.settings['working-area'], project_name)
+
+
+if __name__ == '__main__':
+    Detritus(version=__version__).run()
+

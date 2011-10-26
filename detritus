@@ -44,10 +44,12 @@ class Detritus(cliapp.Application):
         table = {
             'git': self.mirror_git,
         }
-        table[spec['type']](name, spec)
+        vcstype = spec['type']
+        if vcstype not in table:
+            raise cliapp.AppException('Unknown VCS type %s' % vcstype)
+        table[vcstype](self.dirname(name), spec)
         
-    def mirror_git(self, name, spec):
-        dirname = self.dirname(name)
+    def mirror_git(self, dirname, spec):
         if not os.path.exists(dirname):
             self.run_program(['git', 'clone', spec['url'], dirname])
         else:

@@ -44,6 +44,7 @@ class Detritus(cliapp.Application):
         table = {
             'bzr': self.gitify_bzr,
             'git': self.mirror_git,
+            'svn': self.gitify_svn,
         }
         vcstype = spec['type']
         if vcstype not in table:
@@ -71,6 +72,12 @@ class Detritus(cliapp.Application):
         with open(export) as f:
             data = f.read()
         self.run_program(['git', 'fast-import'], stdin=data, cwd=gitdir)
+
+    def gitify_svn(self, dirname, spec):
+        gitdir = os.path.join(dirname, 'git')
+        if not os.path.exists(gitdir):
+            os.mkdir(gitdir)
+            self.run_program(['git', 'svn', 'clone', spec['url'], gitdir])
 
     def run_program(self, argv, **kwargs):
         exit, out, err = self.runcmd_unchecked(argv, **kwargs)

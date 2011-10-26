@@ -78,6 +78,8 @@ class Detritus(cliapp.Application):
         if not os.path.exists(gitdir):
             os.mkdir(gitdir)
             self.run_program(['git', 'svn', 'clone', spec['url'], gitdir])
+        else:
+            self.run_program(['git', 'svn', 'rebase'], cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         exit, out, err = self.runcmd_unchecked(argv, **kwargs)

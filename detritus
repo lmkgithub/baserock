@@ -42,18 +42,35 @@ class Detritus(cliapp.Application):
     def gitify(self, name, spec):
         logging.info('Converting %s' % name)
         table = {
+            'bzr': self.gitify_bzr,
             'git': self.mirror_git,
         }
         vcstype = spec['type']
         if vcstype not in table:
             raise cliapp.AppException('Unknown VCS type %s' % vcstype)
-        table[vcstype](self.dirname(name), spec)
+        dirname = self.dirname(name)
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
+        table[vcstype](dirname, spec)
         
     def mirror_git(self, dirname, spec):
-        if not os.path.exists(dirname):
-            self.run_program(['git', 'clone', spec['url'], dirname])
+        gitdir = os.path.join(dirname, 'git')
+        if not os.path.exists(gitdir):
+            self.run_program(['git', 'clone', spec['url'], gitdir])
         else:
-            self.run_program(['git', 'pull'], cwd=dirname)
+            self.run_program(['git', 'pull'], cwd=gitdir)
+
+    def gitify_bzr(self, dirname, spec):
+        export = os.path.join(dirname, 'fast-export')
+        self.run_program(['bzr', 'fast-export', '--quiet', 
+                          spec['url'], export])
+        gitdir = os.path.join(dirname, 'git')
+        if not os.path.exists(gitdir):
+            os.mkdir(gitdir)
+            self.run_program(['git', 'init', '.'], cwd=gitdir)
+        with open(export) as f:
+            data = f.read()
+        self.run_program(['git', 'fast-import'], stdin=data, cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         exit, out, err = self.runcmd_unchecked(argv, **kwargs)

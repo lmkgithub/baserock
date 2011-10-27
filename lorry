@@ -24,7 +24,7 @@ import os
 __version__ = '0.0'
 
 
-class Detritus(cliapp.Application):
+class Lorry(cliapp.Application):
 
     def add_settings(self):
         self.settings.string(['working-area', 'w'],
@@ -142,5 +142,5 @@ class Detritus(cliapp.Application):
 
 
 if __name__ == '__main__':
-    Detritus(version=__version__).run()
+    Lorry(version=__version__).run()
 

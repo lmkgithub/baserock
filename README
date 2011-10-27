@@ -1,7 +1,7 @@
-README for Detritus
-===================
+README for Lorry
+================
 
-Detritus is a tool to take upstream source code (in various formats,
+Lorry is a tool to take upstream source code (in various formats,
 though preferably in version control) and converts it into a git
 repository.
 
@@ -12,7 +12,7 @@ then you're not dangerous.)
 
 See the manual page for instructions on using.
 
-`baserock.detritus` is the file used by Lars to keep Baserock updated.
+`baserock.lorry` is the file used by Lars to keep Baserock updated.
 
 
 Legal stuff

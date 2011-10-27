@@ -5,6 +5,15 @@ Detritus is a tool to take upstream source code (in various formats,
 though preferably in version control) and converts it into a git
 repository.
 
+If you want to try this, use `--pull-only` and/or `--gitorious-base-url`
+so that you do not accidentally overwrite important stuff for Baserock.
+(If you don't have direct commit access to Baserock on Gitorious.org,
+then you're not dangerous.)
+
+See the manual page for instructions on using.
+
+`baserock.detritus` is the file used by Lars to keep Baserock updated.
+
 
 Legal stuff
 -----------

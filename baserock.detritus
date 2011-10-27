@@ -1,0 +1,11 @@
+{
+    "gawk": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/gawk.git"
+    },
+    "linux": {
+        "type": "git",
+        "url": "git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
+    }
+}
+

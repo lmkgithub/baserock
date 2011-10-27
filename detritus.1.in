@@ -1,0 +1,42 @@
+.\" Copyright (C) 2011  Codethink Limited
+.\" 
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; version 2 of the License.
+.\" 
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\" 
+.\" You should have received a copy of the GNU General Public License along
+.\" with this program; if not, write to the Free Software Foundation, Inc.,
+.\" 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+.\"
+.TH DETRITUS 1
+.SH NAME
+detritus \- mirror upstream code into Baserock git repositories
+.SH SYNOPSIS
+.SH DESCRIPTION
+.B detritus
+mirrors and converts upstream source code into git repositories for Baserock.
+.SH OPTIONS
+.SH EXAMPLE
+To mirror GNU Awk, create a file like the following as 
+.IR foo.detritus :
+.IP
+.nf
+{
+    "gawk": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/gawk.git"
+    }
+}
+.PP
+Then run the following command:
+.IP
+detritus --verbose --pull-only foo.detritus
+.SH "SEE ALSO"
+.TP
+.I "http://wiki.baserock.org/Detritus/"
+The Detritus home page.

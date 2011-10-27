@@ -15,6 +15,13 @@ See the manual page for instructions on using.
 `baserock.lorry` is the file used by Lars to keep Baserock updated.
 
 
+Implementation
+--------------
+
+Lorry relies on git-svn, git-cvsimport, and bzr fast-export for the
+conversions. You need to have them installed.
+
+
 Legal stuff
 -----------
 

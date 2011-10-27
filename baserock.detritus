@@ -1,4 +1,8 @@
 {
+    "busybox": {
+        "type": "git",
+        "url": "git://busybox.net/busybox.git"
+    },
     "gawk": {
         "type": "git",
         "url": "git://git.savannah.gnu.org/gawk.git"

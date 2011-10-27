@@ -36,6 +36,7 @@ class Detritus(cliapp.Application):
 
     def process_args(self, args):
         for arg in args:
+            self.progress('Processing spec file %s' % arg)
             with open(arg) as f:
                 specs = json.load(f)
             for name in sorted(specs.keys()):

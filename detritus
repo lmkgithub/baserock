@@ -60,28 +60,36 @@ class Detritus(cliapp.Application):
     def mirror_git(self, dirname, spec):
         gitdir = os.path.join(dirname, 'git')
         if not os.path.exists(gitdir):
+            self.progress('.. doing initial clone')
             self.run_program(['git', 'clone', spec['url'], gitdir])
         else:
+            self.progress('.. updating existing clone')
             self.run_program(['git', 'pull'], cwd=gitdir)
 
     def gitify_bzr(self, dirname, spec):
+        self.progress('.. fast-exporting from bzr')
         export = os.path.join(dirname, 'fast-export')
         self.run_program(['bzr', 'fast-export', '--quiet', 
                           spec['url'], export])
         gitdir = os.path.join(dirname, 'git')
         if not os.path.exists(gitdir):
+            self.progress('.. creating git repo')
             os.mkdir(gitdir)
             self.run_program(['git', 'init', '.'], cwd=gitdir)
+        self.progress('.. reading fast-export data')
         with open(export) as f:
             data = f.read()
+        self.progress('.. fast-importing into git')
         self.run_program(['git', 'fast-import'], stdin=data, cwd=gitdir)
 
     def gitify_svn(self, dirname, spec):
         gitdir = os.path.join(dirname, 'git')
         if not os.path.exists(gitdir):
+            self.progress('.. doing initial clone')
             os.mkdir(gitdir)
             self.run_program(['git', 'svn', 'clone', spec['url'], gitdir])
         else:
+            self.progress('.. updating existing clone')
             self.run_program(['git', 'svn', 'rebase'], cwd=gitdir)
 
     def gitify_cvs(self, dirname, spec):

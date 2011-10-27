@@ -57,10 +57,10 @@ class Detritus(cliapp.Application):
         dirname = self.dirname(name)
         if not os.path.exists(dirname):
             os.mkdir(dirname)
-        table[vcstype](dirname, spec)
-        
-    def mirror_git(self, dirname, spec):
         gitdir = os.path.join(dirname, 'git')
+        table[vcstype](dirname, gitdir, spec)
+        
+    def mirror_git(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
             self.run_program(['git', 'clone', spec['url'], gitdir])
@@ -68,12 +68,11 @@ class Detritus(cliapp.Application):
             self.progress('.. updating existing clone')
             self.run_program(['git', 'pull'], cwd=gitdir)
 
-    def gitify_bzr(self, dirname, spec):
+    def gitify_bzr(self, dirname, gitdir, spec):
         self.progress('.. fast-exporting from bzr')
         export = os.path.join(dirname, 'fast-export')
         self.run_program(['bzr', 'fast-export', '--quiet', 
                           spec['url'], export])
-        gitdir = os.path.join(dirname, 'git')
         if not os.path.exists(gitdir):
             self.progress('.. creating git repo')
             os.mkdir(gitdir)
@@ -84,8 +83,7 @@ class Detritus(cliapp.Application):
         self.progress('.. fast-importing into git')
         self.run_program(['git', 'fast-import'], stdin=data, cwd=gitdir)
 
-    def gitify_svn(self, dirname, spec):
-        gitdir = os.path.join(dirname, 'git')
+    def gitify_svn(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
             os.mkdir(gitdir)
@@ -94,8 +92,7 @@ class Detritus(cliapp.Application):
             self.progress('.. updating existing clone')
             self.run_program(['git', 'svn', 'rebase'], cwd=gitdir)
 
-    def gitify_cvs(self, dirname, spec):
-        gitdir = os.path.join(dirname, 'git')
+    def gitify_cvs(self, dirname, gitdir, spec):
         self.run_program(['git', 'cvsimport', '-d', spec['url'],
                           '-C', gitdir, spec['module']])
 

@@ -3,6 +3,10 @@
         "type": "git",
         "url": "git://busybox.net/busybox.git"
     },
+    "eglibc": {
+        "type": "svn",
+        "url": "http://www.eglibc.org/svn/trunk"
+    },
     "gawk": {
         "type": "git",
         "url": "git://git.savannah.gnu.org/gawk.git"

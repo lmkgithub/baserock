@@ -35,7 +35,7 @@ class Detritus(cliapp.Application):
                              'prefix project names with URL when constructing '
                                 'the git URL on Gitorious (default: %default)',
                              metavar='URL',
-                             default='git@gitorious.org:baserock-morphologies')
+                             default='git@gitorious.org:baserock-morphs')
         self.settings.boolean(['pull-only'], 
                               'only pull from upstreams, do not push to '
                                 'gitorious')

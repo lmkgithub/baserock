@@ -31,6 +31,14 @@ class Detritus(cliapp.Application):
                              'use DIR as the working area (for holding '
                                 'intermediate git repositories, etc)',
                              metavar='DIR')
+        self.settings.string(['gitorious-base-url'],
+                             'prefix project names with URL when constructing '
+                                'the git URL on Gitorious (default: %default)',
+                             metavar='URL',
+                             default='git@gitorious.org:baserock-morphologies')
+        self.settings.boolean(['pull-only'], 
+                              'only pull from upstreams, do not push to '
+                                'gitorious')
         self.settings.boolean(['verbose', 'v'], 
                               'report what is going on to stdout')
 
@@ -59,6 +67,8 @@ class Detritus(cliapp.Application):
             os.mkdir(dirname)
         gitdir = os.path.join(dirname, 'git')
         table[vcstype](dirname, gitdir, spec)
+        if not self.settings['pull-only']:
+            self.push_to_gitorious(name, gitdir)
         
     def mirror_git(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
@@ -96,6 +106,18 @@ class Detritus(cliapp.Application):
         self.run_program(['git', 'cvsimport', '-d', spec['url'],
                           '-C', gitdir, spec['module']])
 
+    def push_to_gitorious(self, project_name, gitdir):
+        out = self.run_program(['git', 'remote', 'show'], cwd=gitdir)
+        if 'gitorious' not in out.splitlines():
+            self.progress('.. adding gitorious as a remote')
+            url = ('%s/%s.git' % 
+                   (self.settings['gitorious-base-url'], project_name))
+            self.run_program(['git', 'remote', 'add', 'gitorious', url],
+                             cwd=gitdir)
+
+        self.progress('.. pushing to gitorious')
+        self.run_program(['git', 'push', 'gitorious', 'master'], cwd=gitdir)
+
     def run_program(self, argv, **kwargs):
         exit, out, err = self.runcmd_unchecked(argv, **kwargs)
         logging.debug('Command: %s\nExit: %s\nStdout:\n%sStderr:\n%s' % 
@@ -103,6 +125,7 @@ class Detritus(cliapp.Application):
         if exit != 0:
             raise Exception('%s failed (exit code %s):\n%s' % 
                                 (' '.join(argv), exit, self.indent(err)))
+        return out
 
     def indent(self, string):
         return ''.join('    %s\n' % line for line in string.splitlines())

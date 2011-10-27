@@ -38,8 +38,9 @@ class Detritus(cliapp.Application):
         for arg in args:
             with open(arg) as f:
                 specs = json.load(f)
-            for name in specs:
+            for name in sorted(specs.keys()):
                 self.gitify(name, specs[name])
+        self.progress('Done')
     
     def gitify(self, name, spec):
         self.progress('Getting %s from %s' % (name, spec['url']))

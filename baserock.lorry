@@ -1,4 +1,8 @@
 {
+    "autoconf": {
+        "type": "git",
+        "url": "git://git.sv.gnu.org/autoconf"
+    },
     "busybox": {
         "type": "git",
         "url": "git://busybox.net/busybox.git"

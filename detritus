@@ -31,6 +31,8 @@ class Detritus(cliapp.Application):
                              'use DIR as the working area (for holding '
                                 'intermediate git repositories, etc)',
                              metavar='DIR')
+        self.settings.boolean(['verbose', 'v'], 
+                              'report what is going on to stdout')
 
     def process_args(self, args):
         for arg in args:
@@ -40,9 +42,10 @@ class Detritus(cliapp.Application):
                 self.gitify(name, specs[name])
     
     def gitify(self, name, spec):
-        logging.info('Converting %s' % name)
+        self.progress('Getting %s from %s' % (name, spec['url']))
         table = {
             'bzr': self.gitify_bzr,
+            'cvs': self.gitify_cvs,
             'git': self.mirror_git,
             'svn': self.gitify_svn,
         }
@@ -81,6 +84,11 @@ class Detritus(cliapp.Application):
         else:
             self.run_program(['git', 'svn', 'rebase'], cwd=gitdir)
 
+    def gitify_cvs(self, dirname, spec):
+        gitdir = os.path.join(dirname, 'git')
+        self.run_program(['git', 'cvsimport', '-d', spec['url'],
+                          '-C', gitdir, spec['module']])
+
     def run_program(self, argv, **kwargs):
         exit, out, err = self.runcmd_unchecked(argv, **kwargs)
         logging.debug('Command: %s\nExit: %s\nStdout:\n%sStderr:\n%s' % 
@@ -96,6 +104,11 @@ class Detritus(cliapp.Application):
         assert '/' not in project_name
         assert '\0' not in project_name
         return os.path.join(self.settings['working-area'], project_name)
+
+    def progress(self, msg):
+        logging.debug(msg)
+        if self.settings['verbose']:
+            self.output.write('%s\n' % msg)
 
 
 if __name__ == '__main__':

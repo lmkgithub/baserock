@@ -44,6 +44,10 @@
         "type": "git",
         "url": "git://git.sv.gnu.org/m4"
     },
+    "make": {
+        "type": "bzr",
+        "url": "lp:make"
+    },
     "parted": {
         "type": "git",
         "url": "git://git.savannah.gnu.org/parted.git"

@@ -34,6 +34,10 @@
     "linux": {
         "type": "git",
         "url": "git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
+    },
+    "m4": {
+        "type": "git",
+        "url": "git://git.sv.gnu.org/m4"
     }
 }
 

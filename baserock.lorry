@@ -19,6 +19,11 @@
         "type": "svn",
         "url": "http://www.eglibc.org/svn/trunk"
     },
+    "flex": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@flex.cvs.sourceforge.net:/cvsroot/flex",
+        "module": "flex"
+    },
     "gawk": {
         "type": "git",
         "url": "git://git.savannah.gnu.org/gawk.git"

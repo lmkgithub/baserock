@@ -88,10 +88,9 @@ class Lorry(cliapp.Application):
             os.mkdir(gitdir)
             self.run_program(['git', 'init', '.'], cwd=gitdir)
         self.progress('.. reading fast-export data')
-        with open(export) as f:
-            data = f.read()
         self.progress('.. fast-importing into git')
-        self.run_program(['git', 'fast-import'], stdin=data, cwd=gitdir)
+        self.run_program(['sh', '-c', 'git fast-import < ../fast-import'], 
+                         cwd=gitdir)
 
     def gitify_svn(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):

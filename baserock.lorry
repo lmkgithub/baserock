@@ -7,6 +7,10 @@
         "type": "git",
         "url": "git://git.savannah.gnu.org/automake.git"
     },
+    "bison": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/bison.git"
+    },
     "busybox": {
         "type": "git",
         "url": "git://busybox.net/busybox.git"

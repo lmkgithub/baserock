@@ -7,6 +7,10 @@
         "type": "git",
         "url": "git://git.savannah.gnu.org/automake.git"
     },
+    "binutils": {
+        "type": "bzr",
+        "url": "lp:binutils"
+    },
     "bison": {
         "type": "git",
         "url": "git://git.savannah.gnu.org/bison.git"

@@ -79,17 +79,26 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'pull'], cwd=gitdir)
 
     def gitify_bzr(self, dirname, gitdir, spec):
+        bzrdir = os.path.join(dirname, 'bzr')
+        if os.path.exists(bzrdir):
+            self.progress('.. updating bzr branch')
+            self.run_program(['bzr', 'pull', '--quiet', spec['url']], 
+                             cwd=bzrdir)
+        else:
+            self.progress('.. doing initial bzr branch')
+            self.run_program(['bzr', 'branch', '--quiet', spec['url'], bzrdir])
+
         self.progress('.. fast-exporting from bzr')
         export = os.path.join(dirname, 'fast-export')
-        self.run_program(['bzr', 'fast-export', '--quiet', 
-                          spec['url'], export])
+        self.run_program(['bzr', 'fast-export', '--quiet', bzrdir, export])
+
         if not os.path.exists(gitdir):
             self.progress('.. creating git repo')
             os.mkdir(gitdir)
-            self.run_program(['git', 'init', '.'], cwd=gitdir)
-        self.progress('.. reading fast-export data')
+            self.run_program(['git', 'init', gitdir])
+
         self.progress('.. fast-importing into git')
-        self.run_program(['sh', '-c', 'git fast-import < ../fast-import'], 
+        self.run_program(['sh', '-c', 'git fast-import < ../fast-export'], 
                          cwd=gitdir)
 
     def gitify_svn(self, dirname, gitdir, spec):
@@ -118,6 +127,8 @@ class Lorry(cliapp.Application):
         self.run_program(['git', 'push', 'gitorious', 'master'], cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
+        logging.debug('Running: argv=%s kwargs=%s' % 
+                        (repr(argv), repr(kwargs)))
         exit, out, err = self.runcmd_unchecked(argv, **kwargs)
         logging.debug('Command: %s\nExit: %s\nStdout:\n%sStderr:\n%s' % 
                       (argv, exit, self.indent(out), self.indent(err)))

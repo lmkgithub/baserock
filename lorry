@@ -101,6 +101,9 @@ class Lorry(cliapp.Application):
         self.run_program(['sh', '-c', 'git fast-import < ../fast-export'], 
                          cwd=gitdir)
 
+        self.progress('.. removing temporary fast-export file')
+        os.remove(export)
+
     def gitify_svn(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')

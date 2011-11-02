@@ -57,6 +57,7 @@ class Lorry(cliapp.Application):
             'bzr': self.gitify_bzr,
             'cvs': self.gitify_cvs,
             'git': self.mirror_git,
+            'hg':  self.gitify_hg,
             'svn': self.gitify_svn,
         }
         vcstype = spec['type']
@@ -116,6 +117,22 @@ class Lorry(cliapp.Application):
     def gitify_cvs(self, dirname, gitdir, spec):
         self.run_program(['git', 'cvsimport', '-d', spec['url'],
                           '-C', gitdir, spec['module']])
+
+    def gitify_hg(self, dirname, gitdir, spec):
+        hgdir = os.path.join(dirname, 'hg')
+        if os.path.exists(hgdir):
+            self.progress('.. updating hg branch')
+            self.run_program(['hg', 'pull', '--quiet'], cwd=hgdir)
+        else:
+            self.progress('.. doing initial hg branch')
+            self.run_program(['hg', 'clone', '--quiet', spec['url'], hgdir])
+
+        if not os.path.exists(gitdir):
+            self.run_program(['git', 'init', gitdir])
+        
+        self.progress('.. fast-exporting into git')
+        self.run_program(['hg-fast-export', '--quiet', '-r', '../hg'], 
+                         cwd=gitdir)
 
     def push_to_gitorious(self, project_name, gitdir):
         out = self.run_program(['git', 'remote', 'show'], cwd=gitdir)

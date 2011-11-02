@@ -60,6 +60,10 @@
         "type": "svn",
         "url": "svn://scm.gforge.inria.fr/svn/mpc"
     },
+    "mpfr": {
+        "type": "svn",
+        "url": "svn://scm.gforge.inria.fr/svn/mpfr/trunk"
+    },
     "parted": {
         "type": "git",
         "url": "git://git.savannah.gnu.org/parted.git"

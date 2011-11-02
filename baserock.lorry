@@ -32,6 +32,10 @@
         "type": "git",
         "url": "git://git.savannah.gnu.org/gawk.git"
     },
+    "gmp": {
+        "type": "hg",
+        "url": "http://gmplib.org:8000/gmp"
+    },
     "gperf": {
         "type": "git",
         "url": "git://git.savannah.gnu.org/gperf.git"

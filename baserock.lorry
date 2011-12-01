@@ -32,6 +32,10 @@
         "type": "git",
         "url": "git://git.savannah.gnu.org/gawk.git"
     },
+    "gcc": {
+        "type": "bzr",
+        "url": "lp:gcc"
+    },
     "gmp": {
         "type": "hg",
         "url": "http://gmplib.org:8000/gmp"

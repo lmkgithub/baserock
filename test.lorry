@@ -2,6 +2,11 @@
     "gawk": {
         "type": "git",
         "url": "git://git.savannah.gnu.org/gawk.git"
+    },
+    "binutils": {
+        "type": "bzr",
+        "branches": {
+            "trunk": "lp:binutils"
+        }
     }
 }
-

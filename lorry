@@ -52,7 +52,7 @@ class Lorry(cliapp.Application):
         self.progress('Done')
     
     def gitify(self, name, spec):
-        self.progress('Getting %s from %s' % (name, spec['url']))
+        self.progress('Getting %s' % name)
         table = {
             'bzr': self.gitify_bzr,
             'cvs': self.gitify_cvs,
@@ -74,45 +74,73 @@ class Lorry(cliapp.Application):
     def mirror_git(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
-            self.run_program(['git', 'clone', spec['url'], gitdir])
+            self.run_program(['git', 'clone', '--mirror', spec['url'], gitdir])
         else:
             self.progress('.. updating existing clone')
-            self.run_program(['git', 'pull'], cwd=gitdir)
+            self.run_program(['git', 'fetch', '--all'], cwd=gitdir)
 
     def gitify_bzr(self, dirname, gitdir, spec):
         bzrdir = os.path.join(dirname, 'bzr')
-        if os.path.exists(bzrdir):
-            self.progress('.. updating bzr branch')
-            self.run_program(['bzr', 'pull', '--quiet', spec['url']], 
-                             cwd=bzrdir)
-        else:
-            self.progress('.. doing initial bzr branch')
-            self.run_program(['bzr', 'branch', '--quiet', spec['url'], bzrdir])
-
-        self.progress('.. fast-exporting from bzr')
-        export = os.path.join(dirname, 'fast-export')
-        self.run_program(['bzr', 'fast-export', '--quiet', bzrdir, export])
+        # check if repo exists
+        if not os.path.exists(bzrdir):
+            self.progress('.. creating bzr repository')
+            self.run_program(['bzr', 'init-repo', '--no-trees', bzrdir])
 
         if not os.path.exists(gitdir):
             self.progress('.. creating git repo')
             os.mkdir(gitdir)
             self.run_program(['git', 'init', gitdir])
 
-        self.progress('.. fast-importing into git')
-        self.run_program(['sh', '-c', 'git fast-import < ../fast-export'], 
-                         cwd=gitdir)
+        # branches are the listed branches, plus the branch specified in url
+        if 'branches' in spec:
+            branches = spec['branches']
+        else:
+            branches = {}
+        if 'url' in spec:
+            #branches.append(spec['url'])
+            branches['trunk'] = spec['url']
+        logging.debug('all branches: %s' % repr(branches))
 
-        self.progress('.. removing temporary fast-export file')
-        os.remove(export)
+        for branch, address in branches.iteritems():
+            branchdir = os.path.join(bzrdir, branch)
+            if not os.path.exists(branchdir):
+                self.progress('.. doing initial bzr branch')
+                self.run_program(['bzr', 'branch', '--quiet', address,
+                                  branchdir])
+            else:
+                self.progress('.. updating bzr branch')
+                self.run_program(['bzr', 'pull', '--quiet', address],
+                                 cwd=branchdir)
+
+        for branch, address in branches.iteritems():
+            branchdir = os.path.join(bzrdir, branch)
+            self.progress('.. fast-exporting from bzr')
+            export = os.path.join(dirname, 'fast-export')
+            self.run_program(['bzr', 'fast-export', '--quiet', branchdir,
+                              export])
+
+        for branch, address in branches.iteritems():
+            branchdir = os.path.join(bzrdir, branch)
+            self.progress('.. fast-importing into git')
+            # redirect stdin with this rather than shell command, more safe
+            #self.run_program(['sh', '-c', 'git fast-import <../../fast-export'], cwd=branchdir)
+            with open(export, 'rb') as exportfile:
+                self.run_program(['git', 'fast-import'], stdin=exportfile,
+                                 cwd=branchdir)
+
+        for branch, address in branches.iteritems():
+            branchdir = os.path.join(bzrdir, branch)
+            self.progress('.. removing temporary fast-export file')
+            os.remove(export)
 
     def gitify_svn(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
             os.mkdir(gitdir)
-            self.run_program(['git', 'svn', 'clone', spec['url'], gitdir])
+            self.run_program(['git', 'svn', 'clone', '--mirror', spec['url'], gitdir])
         else:
             self.progress('.. updating existing clone')
-            self.run_program(['git', 'svn', 'rebase'], cwd=gitdir)
+            self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
 
     def gitify_cvs(self, dirname, gitdir, spec):
         self.run_program(['git', 'cvsimport', '-d', spec['url'],
@@ -144,7 +172,7 @@ class Lorry(cliapp.Application):
                              cwd=gitdir)
 
         self.progress('.. pushing to gitorious')
-        self.run_program(['git', 'push', 'gitorious', 'master'], cwd=gitdir)
+        self.run_program(['git', 'push', '--mirror', 'gitorious'], cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         logging.debug('Running: argv=%s kwargs=%s' % 

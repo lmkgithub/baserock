@@ -19,6 +19,7 @@ import cliapp
 import json
 import logging
 import os
+import urllib2
 
 
 __version__ = '0.0'
@@ -59,6 +60,7 @@ class Lorry(cliapp.Application):
             'git': self.mirror_git,
             'hg':  self.gitify_hg,
             'svn': self.gitify_svn,
+            'tarball': self.gitify_tarball,
         }
         vcstype = spec['type']
         if vcstype not in table:
@@ -161,6 +163,33 @@ class Lorry(cliapp.Application):
         self.progress('.. fast-exporting into git')
         self.run_program(['hg-fast-export', '--quiet', '-r', '../hg'], 
                          cwd=gitdir)
+
+    def gitify_tarball(self, dirname, gitdir, spec):
+        tardest = os.path.join(dirname, 'tarball')
+        if not os.path.exists(tardest):
+            with open(tardest, 'w') as tarfile:
+                urlfile = urllib2.urlopen(spec['url'])
+                tarfile.write(urlfile.read())
+                urlfile.close()
+
+        if not os.path.exists(gitdir):
+            self.run_program(['git', 'init', gitdir])
+            cmdline = ['tar', '--extract', '--file', tardest]
+            # compression is handled in long form, so use gzip instead of z
+            try:
+                cmdline += ['--' + spec['compression']]
+            except KeyError:
+                pass
+            # tarballs often have a directory on top, strip = 1 will remove it
+            try:
+                cmdline += ['--strip-components', str(spec['strip'])]
+            except KeyError:
+                pass
+            self.run_program(cmdline, cwd=gitdir)
+            self.run_program(['git', 'add', '.'], cwd=gitdir)
+            self.run_program(['git', 'commit', '-m', 'Tarball conversion'],
+                             cwd=gitdir)
+            
 
     def push_to_gitorious(self, project_name, gitdir):
         out = self.run_program(['git', 'remote', 'show'], cwd=gitdir)

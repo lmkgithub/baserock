@@ -77,7 +77,7 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'clone', '--mirror', spec['url'], gitdir])
         else:
             self.progress('.. updating existing clone')
-            self.run_program(['git', 'fetch', '--all', '--tags'], cwd=gitdir)
+            self.run_program(['git', 'fetch', '--all'], cwd=gitdir)
 
     def gitify_bzr(self, dirname, gitdir, spec):
         bzrdir = os.path.join(dirname, 'bzr')
@@ -172,7 +172,7 @@ class Lorry(cliapp.Application):
                              cwd=gitdir)
 
         self.progress('.. pushing to gitorious')
-        self.run_program(['git', 'push', '--all', '--tags', 'gitorious'], cwd=gitdir)
+        self.run_program(['git', 'push', '--all', 'gitorious'], cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         logging.debug('Running: argv=%s kwargs=%s' % 

@@ -77,6 +77,75 @@
         "compression": "gzip",
         "strip": 1,
         "url": "http://ftp.gnu.org/gnu/bc/bc-1.06.tar.gz"
+    },
+    "xz": {
+        "type": "git",
+        "url": "http://git.tukaani.org/xz.git"
+    },
+    "diffutils": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/diffutils.git"
+    },
+    "sed": {
+        "type": "git",
+        "url": "git://git.sv.gnu.org/sed.git"
+    },
+    "bzip2": {
+        "type": "tarball",
+        "compression": "gzip",
+        "strip": 1,
+        "url": "http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz"
+    },
+    "util-linux": {
+        "type": "git",
+        "url": "git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git"
+    },
+    "psmisc": {
+        "type": "git",
+        "url": "git://psmisc.git.sourceforge.net/gitroot/psmisc/psmisc"
+    },
+    "e2fsprogs": {
+        "type": "git",
+        "url": "git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git"
+    },
+    "coreutils": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/coreutils.git"
+    },
+    "iana-etc": {
+        "type": "tarball",
+        "compression": "bzip2",
+        "strip": 1,
+        "url": "http://sethwklein.net/iana-etc-2.30.tar.bz2"
+    },
+    "procps": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@procps.cvs.sourceforge.net:/cvsroot/procps",
+        "module": "procps"
+    },
+    "grep": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/grep.git"
+    },
+    "readline": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/readline.git"
+    },
+    "bash": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/bash.git"
+    },
+    "gdbm": {
+        "type": "git",
+        "url": "git://git.gnu.org.ua/gdbm.git"
+    },
+    "inetutils": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/inetutils.git"
+    },
+    "perl": {
+        "type": "git",
+        "url": "git://perl5.git.perl.org/perl.git"
     }
 }
 

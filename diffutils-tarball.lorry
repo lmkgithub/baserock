@@ -1,0 +1,8 @@
+{
+	"diffutils-tarball": {
+		"type": "tarball",
+		"compression": "xz",
+		"strip": 1,
+		"url": "http://ftp.gnu.org/gnu/diffutils/diffutils-3.2.tar.xz"
+	}
+}

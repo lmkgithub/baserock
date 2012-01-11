@@ -114,26 +114,27 @@ class Lorry(cliapp.Application):
                 self.run_program(['bzr', 'pull', '--quiet', address],
                                  cwd=branchdir)
 
+        exports = {}
         for branch, address in branches.iteritems():
             branchdir = os.path.join(bzrdir, branch)
             self.progress('.. fast-exporting from bzr')
-            export = os.path.join(dirname, 'fast-export')
-            self.run_program(['bzr', 'fast-export', '--quiet', branchdir,
-                              export])
+            exports[branch] = os.path.join(dirname, 'fast-export' + branch)
+            self.run_program(['bzr', 'fast-export', '--quiet',
+                              '--git-branch=' + branch, branchdir,
+                              exports[branch]])
 
         for branch, address in branches.iteritems():
             branchdir = os.path.join(bzrdir, branch)
             self.progress('.. fast-importing into git')
             # redirect stdin with this rather than shell command, more safe
-            #self.run_program(['sh', '-c', 'git fast-import <../../fast-export'], cwd=branchdir)
-            with open(export, 'rb') as exportfile:
+            with open(exports[branch], 'rb') as exportfile:
                 self.run_program(['git', 'fast-import'], stdin=exportfile,
                                  cwd=branchdir)
 
         for branch, address in branches.iteritems():
             branchdir = os.path.join(bzrdir, branch)
             self.progress('.. removing temporary fast-export file')
-            os.remove(export)
+            os.remove(exports[branch])
 
     def gitify_svn(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
@@ -200,8 +201,10 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'remote', 'add', 'gitorious', url],
                              cwd=gitdir)
 
-        self.progress('.. pushing to gitorious')
+        self.progress('.. pushing branches to gitorious')
         self.run_program(['git', 'push', '--all', 'gitorious'], cwd=gitdir)
+        self.progress('.. pushing tags to gitorious')
+        self.run_program(['git', 'push', '--tags', 'gitorious'], cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         logging.debug('Running: argv=%s kwargs=%s' % 

@@ -146,6 +146,28 @@
     "perl": {
         "type": "git",
         "url": "git://perl5.git.perl.org/perl.git"
+    },
+    "findutils": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/findutils.git"
+    },
+    "git": {
+        "type": "git",
+        "url": "git://github.com/gitster/git.git"
+    },
+    "rsync": {
+        "type": "tarball",
+        "compression": "gzip",
+        "strip": 1,
+        "url": "ftp://samba.org/pub/rsync/src/rsync-3.0.9.tar.gz"
+    },
+    "gettext": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/gettext.git"
+    },
+    "help2man": {
+        "type": "git",
+        "url": "git://anonscm.debian.org/users/bod/help2man.git"
     }
 }
 

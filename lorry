@@ -115,25 +115,31 @@ class Lorry(cliapp.Application):
                                  cwd=branchdir)
 
         exports = {}
+        bzrmarks = os.path.join(dirname, 'marks.bzr')
         for branch, address in branches.iteritems():
             branchdir = os.path.join(bzrdir, branch)
-            self.progress('.. fast-exporting from bzr')
+            self.progress('.. fast-exporting branch %s from bzr' % branch)
             exports[branch] = os.path.join(dirname, 'fast-export' + branch)
-            self.run_program(['bzr', 'fast-export', '--quiet',
-                              '--git-branch=' + branch, branchdir,
-                              exports[branch]])
+            cmdline = ['bzr', 'fast-export', '--git-branch=' + branch, branchdir, exports[branch]]
+            if os.path.exists(bzrmarks):
+                cmdline.append('--marks=' + bzrmarks)
+            else:
+                cmdline.append('--export-marks=' + bzrmarks)
+            self.run_program(cmdline)
 
+        gitmarks = os.path.join(dirname, 'marks.git')
         for branch, address in branches.iteritems():
-            branchdir = os.path.join(bzrdir, branch)
-            self.progress('.. fast-importing into git')
-            # redirect stdin with this rather than shell command, more safe
+            self.progress('.. fast-importing branch %s into git' % branch)
             with open(exports[branch], 'rb') as exportfile:
-                self.run_program(['git', 'fast-import'], stdin=exportfile,
-                                 cwd=branchdir)
+                cmdline = ['git', 'fast-import', '--export-marks=' + gitmarks]
+                if os.path.exists(gitmarks):
+                    cmdline.append('--import-marks=' + gitmarks)
+                self.run_program(cmdline, stdin=exportfile,
+                                 cwd=gitdir)
 
         for branch, address in branches.iteritems():
             branchdir = os.path.join(bzrdir, branch)
-            self.progress('.. removing temporary fast-export file')
+            self.progress('.. removing temporary fast-export file ' + exports[branch])
             os.remove(exports[branch])
 
     def gitify_svn(self, dirname, gitdir, spec):

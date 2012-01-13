@@ -146,7 +146,7 @@ class Lorry(cliapp.Application):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
             os.mkdir(gitdir)
-            self.run_program(['git', 'svn', 'clone', '--mirror', spec['url'], gitdir])
+            self.run_program(['git', 'svn', 'clone', spec['url'], gitdir])
         else:
             self.progress('.. updating existing clone')
             self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)

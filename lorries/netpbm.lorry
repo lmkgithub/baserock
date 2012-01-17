@@ -1,0 +1,6 @@
+{
+    "netpbm": {
+        "type": "svn",
+        "url": "http://netpbm.svn.sourceforge.net/svnroot/netpbm/advanced"
+    }
+}

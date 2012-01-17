@@ -1,0 +1,6 @@
+{
+    "git": {
+        "type": "git",
+        "url": "git://github.com/gitster/git.git"
+    }
+}

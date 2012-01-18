@@ -42,6 +42,9 @@ class Lorry(cliapp.Application):
                                 'gitorious')
         self.settings.boolean(['verbose', 'v'], 
                               'report what is going on to stdout')
+        self.settings.boolean(['repack'], 
+                              'repack git repositories when an import has'
+                              'been updated')
 
     def process_args(self, args):
         for arg in args:
@@ -70,6 +73,9 @@ class Lorry(cliapp.Application):
             os.mkdir(dirname)
         gitdir = os.path.join(dirname, 'git')
         table[vcstype](dirname, gitdir, spec)
+        if self.settings['repack']:
+            self.run_program(['git', 'repack', '-a', '-d', '--depth=250',
+                              '--window=250'], cwd=gitdir)
         if not self.settings['pull-only']:
             self.push_to_gitorious(name, gitdir)
         

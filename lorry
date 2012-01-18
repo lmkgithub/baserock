@@ -44,7 +44,7 @@ class Lorry(cliapp.Application):
                               'report what is going on to stdout')
         self.settings.boolean(['repack'], 
                               'repack git repositories when an import has'
-                              'been updated')
+                              'been updated (default: %default)', default=True)
 
     def process_args(self, args):
         for arg in args:

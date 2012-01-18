@@ -74,7 +74,7 @@ class Lorry(cliapp.Application):
         gitdir = os.path.join(dirname, 'git')
         table[vcstype](dirname, gitdir, spec)
         if self.settings['repack']:
-            self.progress('Repacking %s git repository' % name)
+            self.progress('.. repacking %s git repository' % name)
             self.run_program(['git', 'repack', '-a', '-d', '--depth=250',
                               '--window=250'], cwd=gitdir)
         if not self.settings['pull-only']:

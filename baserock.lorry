@@ -284,6 +284,11 @@
         "compression": "lzma",
         "strip": 1,
         "url": "http://ftp.gnu.org/gnu/texinfo/texinfo-4.13a.tar.lzma"
+    },
+    "libexpat": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@expat.cvs.sourceforge.net:/cvsroot/expat",
+        "module": "expat"
     }
 }
 

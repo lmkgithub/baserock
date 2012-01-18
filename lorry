@@ -19,6 +19,7 @@ import cliapp
 import json
 import logging
 import os
+import urllib2
 
 
 __version__ = '0.0'
@@ -52,13 +53,14 @@ class Lorry(cliapp.Application):
         self.progress('Done')
     
     def gitify(self, name, spec):
-        self.progress('Getting %s from %s' % (name, spec['url']))
+        self.progress('Getting %s' % name)
         table = {
             'bzr': self.gitify_bzr,
             'cvs': self.gitify_cvs,
             'git': self.mirror_git,
             'hg':  self.gitify_hg,
             'svn': self.gitify_svn,
+            'tarball': self.gitify_tarball,
         }
         vcstype = spec['type']
         if vcstype not in table:
@@ -74,36 +76,71 @@ class Lorry(cliapp.Application):
     def mirror_git(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
-            self.run_program(['git', 'clone', spec['url'], gitdir])
+            self.run_program(['git', 'clone', '--mirror', spec['url'], gitdir])
         else:
             self.progress('.. updating existing clone')
-            self.run_program(['git', 'pull'], cwd=gitdir)
+            self.run_program(['git', 'fetch', '--all'], cwd=gitdir)
 
     def gitify_bzr(self, dirname, gitdir, spec):
         bzrdir = os.path.join(dirname, 'bzr')
-        if os.path.exists(bzrdir):
-            self.progress('.. updating bzr branch')
-            self.run_program(['bzr', 'pull', '--quiet', spec['url']], 
-                             cwd=bzrdir)
-        else:
-            self.progress('.. doing initial bzr branch')
-            self.run_program(['bzr', 'branch', '--quiet', spec['url'], bzrdir])
-
-        self.progress('.. fast-exporting from bzr')
-        export = os.path.join(dirname, 'fast-export')
-        self.run_program(['bzr', 'fast-export', '--quiet', bzrdir, export])
+        # check if repo exists
+        if not os.path.exists(bzrdir):
+            self.progress('.. creating bzr repository')
+            self.run_program(['bzr', 'init-repo', '--no-trees', bzrdir])
 
         if not os.path.exists(gitdir):
             self.progress('.. creating git repo')
             os.mkdir(gitdir)
             self.run_program(['git', 'init', gitdir])
 
-        self.progress('.. fast-importing into git')
-        self.run_program(['sh', '-c', 'git fast-import < ../fast-export'], 
-                         cwd=gitdir)
+        # branches are the listed branches, plus the branch specified in url
+        if 'branches' in spec:
+            branches = spec['branches']
+        else:
+            branches = {}
+        if 'url' in spec:
+            #branches.append(spec['url'])
+            branches['trunk'] = spec['url']
+        logging.debug('all branches: %s' % repr(branches))
 
-        self.progress('.. removing temporary fast-export file')
-        os.remove(export)
+        for branch, address in branches.iteritems():
+            branchdir = os.path.join(bzrdir, branch)
+            if not os.path.exists(branchdir):
+                self.progress('.. doing initial bzr branch')
+                self.run_program(['bzr', 'branch', '--quiet', address,
+                                  branchdir])
+            else:
+                self.progress('.. updating bzr branch')
+                self.run_program(['bzr', 'pull', '--quiet', address],
+                                 cwd=branchdir)
+
+        exports = {}
+        bzrmarks = os.path.join(dirname, 'marks.bzr')
+        for branch, address in branches.iteritems():
+            branchdir = os.path.join(bzrdir, branch)
+            self.progress('.. fast-exporting branch %s from bzr' % branch)
+            exports[branch] = os.path.join(dirname, 'fast-export' + branch)
+            cmdline = ['bzr', 'fast-export', '--git-branch=' + branch, branchdir, exports[branch]]
+            if os.path.exists(bzrmarks):
+                cmdline.append('--marks=' + bzrmarks)
+            else:
+                cmdline.append('--export-marks=' + bzrmarks)
+            self.run_program(cmdline)
+
+        gitmarks = os.path.join(dirname, 'marks.git')
+        for branch, address in branches.iteritems():
+            self.progress('.. fast-importing branch %s into git' % branch)
+            with open(exports[branch], 'rb') as exportfile:
+                cmdline = ['git', 'fast-import', '--export-marks=' + gitmarks]
+                if os.path.exists(gitmarks):
+                    cmdline.append('--import-marks=' + gitmarks)
+                self.run_program(cmdline, stdin=exportfile,
+                                 cwd=gitdir)
+
+        for branch, address in branches.iteritems():
+            branchdir = os.path.join(bzrdir, branch)
+            self.progress('.. removing temporary fast-export file ' + exports[branch])
+            os.remove(exports[branch])
 
     def gitify_svn(self, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
@@ -112,7 +149,7 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'svn', 'clone', spec['url'], gitdir])
         else:
             self.progress('.. updating existing clone')
-            self.run_program(['git', 'svn', 'rebase'], cwd=gitdir)
+            self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
 
     def gitify_cvs(self, dirname, gitdir, spec):
         self.run_program(['git', 'cvsimport', '-d', spec['url'],
@@ -134,6 +171,33 @@ class Lorry(cliapp.Application):
         self.run_program(['hg-fast-export', '--quiet', '-r', '../hg'], 
                          cwd=gitdir)
 
+    def gitify_tarball(self, dirname, gitdir, spec):
+        tardest = os.path.join(dirname, 'tarball')
+        if not os.path.exists(tardest):
+            with open(tardest, 'w') as tarfile:
+                urlfile = urllib2.urlopen(spec['url'])
+                tarfile.write(urlfile.read())
+                urlfile.close()
+
+        if not os.path.exists(gitdir):
+            self.run_program(['git', 'init', gitdir])
+            cmdline = ['tar', '--extract', '--file', tardest]
+            # compression is handled in long form, so use gzip instead of z
+            try:
+                cmdline += ['--' + spec['compression']]
+            except KeyError:
+                pass
+            # tarballs often have a directory on top, strip = 1 will remove it
+            try:
+                cmdline += ['--strip-components', str(spec['strip'])]
+            except KeyError:
+                pass
+            self.run_program(cmdline, cwd=gitdir)
+            self.run_program(['git', 'add', '.'], cwd=gitdir)
+            self.run_program(['git', 'commit', '-m', 'Tarball conversion'],
+                             cwd=gitdir)
+            
+
     def push_to_gitorious(self, project_name, gitdir):
         out = self.run_program(['git', 'remote', 'show'], cwd=gitdir)
         if 'gitorious' not in out.splitlines():
@@ -143,8 +207,10 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'remote', 'add', 'gitorious', url],
                              cwd=gitdir)
 
-        self.progress('.. pushing to gitorious')
-        self.run_program(['git', 'push', 'gitorious', 'master'], cwd=gitdir)
+        self.progress('.. pushing branches to gitorious')
+        self.run_program(['git', 'push', '--all', 'gitorious'], cwd=gitdir)
+        self.progress('.. pushing tags to gitorious')
+        self.run_program(['git', 'push', '--tags', 'gitorious'], cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         logging.debug('Running: argv=%s kwargs=%s' % 

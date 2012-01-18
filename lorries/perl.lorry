@@ -1,0 +1,6 @@
+{
+    "perl": {
+        "type": "git",
+        "url": "git://perl5.git.perl.org/perl.git"
+    }
+}

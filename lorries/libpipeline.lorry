@@ -1,0 +1,6 @@
+{
+    "libpipeline": {
+        "type": "bzr",
+        "url": "http://bzr.savannah.gnu.org/r/libpipeline/trunk"
+    }
+}

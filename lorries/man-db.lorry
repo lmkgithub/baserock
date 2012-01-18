@@ -1,0 +1,6 @@
+{
+    "man-db": {
+        "type": "bzr",
+        "url": "bzr://bzr.savannah.nongnu.org/man-db/trunk"
+    }
+}

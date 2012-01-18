@@ -1,0 +1,6 @@
+{
+    "wget": {
+        "type": "bzr",
+        "url": "http://bzr.savannah.gnu.org/r/wget/trunk"
+    }
+}

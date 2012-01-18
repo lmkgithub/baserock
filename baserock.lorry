@@ -71,6 +71,228 @@
     "parted": {
         "type": "git",
         "url": "git://git.savannah.gnu.org/parted.git"
+    },
+    "sudo": {
+        "type": "hg",
+        "url": "http://www.sudo.ws/repos/sudo"
+    },
+    "bc": {
+        "type": "tarball",
+        "compression": "gzip",
+        "strip": 1,
+        "url": "http://ftp.gnu.org/gnu/bc/bc-1.06.tar.gz"
+    },
+    "xz": {
+        "type": "git",
+        "url": "http://git.tukaani.org/xz.git"
+    },
+    "diffutils": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/diffutils.git"
+    },
+    "sed": {
+        "type": "git",
+        "url": "git://git.sv.gnu.org/sed.git"
+    },
+    "bzip2": {
+        "type": "tarball",
+        "compression": "gzip",
+        "strip": 1,
+        "url": "http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz"
+    },
+    "util-linux": {
+        "type": "git",
+        "url": "git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git"
+    },
+    "psmisc": {
+        "type": "git",
+        "url": "git://psmisc.git.sourceforge.net/gitroot/psmisc/psmisc"
+    },
+    "e2fsprogs": {
+        "type": "git",
+        "url": "git://git.kernel.org/pub/scm/fs/ext2/e2fsprogs.git"
+    },
+    "coreutils": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/coreutils.git"
+    },
+    "iana-etc": {
+        "type": "tarball",
+        "compression": "bzip2",
+        "strip": 1,
+        "url": "http://sethwklein.net/iana-etc-2.30.tar.bz2"
+    },
+    "procps": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@procps.cvs.sourceforge.net:/cvsroot/procps",
+        "module": "procps"
+    },
+    "grep": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/grep.git"
+    },
+    "readline": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/readline.git"
+    },
+    "bash": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/bash.git"
+    },
+    "gdbm": {
+        "type": "git",
+        "url": "git://git.gnu.org.ua/gdbm.git"
+    },
+    "inetutils": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/inetutils.git"
+    },
+    "perl": {
+        "type": "git",
+        "url": "git://perl5.git.perl.org/perl.git"
+    },
+    "findutils": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/findutils.git"
+    },
+    "git": {
+        "type": "git",
+        "url": "git://github.com/gitster/git.git"
+    },
+    "rsync": {
+        "type": "git",
+        "url": "git://git.samba.org/rsync.git"
+    },
+    "gettext": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/gettext.git"
+    },
+    "help2man": {
+        "type": "git",
+        "url": "git://anonscm.debian.org/users/bod/help2man.git"
+    },
+    "groff": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@cvs.savannah.gnu.org:/sources/groff",
+        "module": "groff"
+    },
+    "curl": {
+        "type": "git",
+        "url": "git://github.com/bagder/curl.git"
+    },
+    "gzip": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/gzip.git"
+    },
+    "kbd": {
+        "type": "git",
+        "url": "git://git.kernel.org/pub/scm/linux/kernel/git/legion/kbd.git"
+    },
+    "less": {
+        "type": "tarball",
+        "compression": "gzip",
+        "strip": 1,
+        "url": "http://ftp.gnu.org/gnu/less/less-443.tar.gz"
+    },
+    "libpipeline": {
+        "type": "bzr",
+        "url": "http://bzr.savannah.gnu.org/r/libpipeline/trunk"
+    },
+    "libpng": {
+        "type": "git",
+        "url": "git://libpng.git.sourceforge.net/gitroot/libpng/libpng"
+    },
+    "libjpeg": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@libjpeg.cvs.sourceforge.net:/cvsroot/libjpeg",
+        "module": "libjpeg"
+    },
+    "libtiff": {
+        "type": "cvs",
+        "url": ":pserver:cvsanon@cvs.maptools.org:/cvs/maptools/cvsroot",
+        "module": "libtiff"
+    },
+    "netpbm": {
+        "type": "svn",
+        "url": "http://netpbm.svn.sourceforge.net/svnroot/netpbm/advanced"
+    },
+    "wget": {
+        "type": "bzr",
+        "url": "bzr://bzr.savannah.gnu.org/wget/trunk"
+    },
+    "man-db": {
+        "type": "bzr",
+        "url": "bzr://bzr.savannah.nongnu.org/man-db/trunk"
+    },
+    "openssl": {
+        "type": "cvs",
+        "url": "anonymous@cvs.openssl.org:/openssl-cvs",
+        "module": "openssl"
+    },
+    "gnutls": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/gnutls.git"
+    },
+    "lsh": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@cvs.lysator.liu.se:/cvsroot/lsh",
+        "module": "lsh"
+    },
+    "patch": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/patch.git"
+    },
+    "tar": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/tar.git"
+    },
+    "texinfo": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@cvs.savannah.gnu.org:/sources/texinfo",
+        "module": "texinfo"
+    },
+    "vim": {
+        "type": "hg",
+        "url": "https://vim.googlecode.com/hg/"
+    },
+    "pkg-config": {
+        "type": "git",
+        "url": "git://anongit.freedesktop.org/pkg-config"
+    },
+    "glib": {
+        "type": "git",
+        "url": "git://git.gnome.org/glib"
+    },
+    "libffi": {
+        "type": "git",
+        "url": "git://github.com/atgreen/libffi.git"
+    },
+    "python": {
+        "type": "hg",
+        "url": "http://hg.python.org/cpython"
+    },
+    "pcre": {
+        "type": "svn",
+        "url": "svn://vcs.exim.org/pcre/code/trunk"
+    },
+    "gnulib": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/gnulib.git"
+    },
+    "attr": {
+        "type": "git",
+        "url": "git://git.savannah.nongnu.org/attr.git"
+    },
+    "texinfo-tarball": {
+        "type": "tarball",
+        "compression": "lzma",
+        "strip": 1,
+        "url": "http://ftp.gnu.org/gnu/texinfo/texinfo-4.13a.tar.lzma"
+    },
+    "libexpat": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@expat.cvs.sourceforge.net:/cvsroot/expat",
+        "module": "expat"
     }
 }
 

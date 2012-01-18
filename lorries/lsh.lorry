@@ -1,0 +1,7 @@
+{
+    "lsh": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@cvs.lysator.liu.se:/cvsroot/lsh",
+        "module": "lsh"
+    }
+}

@@ -289,6 +289,12 @@
         "strip": 1,
         "url": "http://ftp.gnu.org/gnu/texinfo/texinfo-4.13a.tar.lzma"
     },
+    "ncurses": {
+        "type": "tarball",
+        "compression": "gzip",
+        "strip": 1,
+        "url": "http://ftp.gnu.org/gnu/ncurses/ncurses-5.9.tar.gz"
+    },
     "libexpat": {
         "type": "cvs",
         "url": ":pserver:anonymous@expat.cvs.sourceforge.net:/cvsroot/expat",

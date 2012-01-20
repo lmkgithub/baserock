@@ -45,6 +45,12 @@ class Lorry(cliapp.Application):
         self.settings.boolean(['repack'], 
                               'repack git repositories when an import has'
                               'been updated (default: %default)', default=True)
+        self.settings.string(['command-stdout'],
+                             'write the stdout of commands to this file',
+                             default=None)
+        self.settings.string(['command-stderr'],
+                             'write the stderr of commands to this file',
+                             default=None)
 
     def process_args(self, args):
         for arg in args:
@@ -166,7 +172,10 @@ class Lorry(cliapp.Application):
                                   '--branches', layout["branches"]])
         else:
             self.progress('.. updating existing clone')
+            # update the remote tracking branch
             self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
+            # update the master branch with these changes
+            self.run_program(['git', 'svn', 'rebase'] cwd=gitdir
 
     def gitify_cvs(self, dirname, gitdir, spec):
         self.run_program(['git', 'cvsimport', '-d', spec['url'],
@@ -230,14 +239,19 @@ class Lorry(cliapp.Application):
         self.run_program(['git', 'push', '--tags', 'gitorious'], cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
+        if self.settings['command-stdout']:
+            kwargs['stdout'] = open(self.settings['command-stdout'], 'a')
+        if self.settings['command-stderr']:
+            kwargs['stderr'] = open(self.settings['command-stderr'], 'a')
         logging.debug('Running: argv=%s kwargs=%s' % 
                         (repr(argv), repr(kwargs)))
         exit, out, err = self.runcmd_unchecked(argv, **kwargs)
         logging.debug('Command: %s\nExit: %s\nStdout:\n%sStderr:\n%s' % 
-                      (argv, exit, self.indent(out), self.indent(err)))
+                      (argv, exit, self.indent(out or ''),
+                       self.indent(err or '')))
         if exit != 0:
             raise Exception('%s failed (exit code %s):\n%s' % 
-                                (' '.join(argv), exit, self.indent(err)))
+                                (' '.join(argv), exit, self.indent(err or '')))
         return out
 
     def indent(self, string):

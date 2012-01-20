@@ -308,6 +308,15 @@
         "type": "cvs",
         "url": ":pserver:anonymous@expat.cvs.sourceforge.net:/cvsroot/expat",
         "module": "expat"
+    },
+    "texlive": {
+        "type": "svn",
+        "url": "svn://tug.org/texlive/",
+        "layout": {
+            "trunk": "trunk/Build/source",
+            "branches": "branches/*/Build/source",
+            "tags": "tags/*/Build/source"
+        }
     }
 }
 

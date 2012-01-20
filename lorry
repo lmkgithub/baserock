@@ -166,16 +166,23 @@ class Lorry(cliapp.Application):
                                   spec['url'], gitdir])
             else:
                 layout = spec["layout"]
+                # git-svn will append /* to branches or tags that don't
+                # already have one, this does not work with {a,b} globs
                 self.run_program(['git', 'svn', 'clone', spec['url'], gitdir,
-                                  '--tags',     layout["tags"],
-                                  '--trunk',    layout["trunk"],
-                                  '--branches', layout["branches"]])
+                                  '--trunk', layout["trunk"]])
+                self.run_program(['git', 'config', 'svn-remote.svn.branches',
+                                  layout["branches"] + ':refs/remotes/*'],
+                                 cwd=gitdir)
+                self.run_program(['git', 'config', 'svn-remote.svn.tags',
+                                  layout["tags"] + ':refs/remotes/tags/*'],
+                                 cwd=gitdir)
+                self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
         else:
             self.progress('.. updating existing clone')
             # update the remote tracking branch
             self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
             # update the master branch with these changes
-            self.run_program(['git', 'svn', 'rebase'] cwd=gitdir
+            self.run_program(['git', 'svn', 'rebase'], cwd=gitdir)
 
     def gitify_cvs(self, dirname, gitdir, spec):
         self.run_program(['git', 'cvsimport', '-d', spec['url'],

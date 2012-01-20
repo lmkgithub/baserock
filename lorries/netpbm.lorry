@@ -1,6 +1,11 @@
 {
     "netpbm": {
         "type": "svn",
-        "url": "http://netpbm.svn.sourceforge.net/svnroot/netpbm/advanced"
+        "url": "http://netpbm.svn.sourceforge.net/svnroot/netpbm"
+        "layout": {
+            "trunk": "trunk",
+            "branches": "{advanced,stable,super_stable}",
+            "tags": "release_number"
+        }
     }
 }

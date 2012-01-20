@@ -21,7 +21,8 @@
     },
     "eglibc": {
         "type": "svn",
-        "url": "http://www.eglibc.org/svn/trunk"
+        "url": "svn://svn.eglibc.org",
+        "layout": "standard"
     },
     "flex": {
         "type": "cvs",
@@ -62,11 +63,13 @@
     },
     "mpc": {
         "type": "svn",
-        "url": "svn://scm.gforge.inria.fr/svn/mpc"
+        "url": "svn://scm.gforge.inria.fr/svn/mpc",
+        "layout": "standard"
     },
     "mpfr": {
         "type": "svn",
-        "url": "svn://scm.gforge.inria.fr/svn/mpfr/trunk"
+        "url": "svn://scm.gforge.inria.fr/svn/mpfr/",
+        "layout": "standard"
     },
     "parted": {
         "type": "git",
@@ -214,7 +217,12 @@
     },
     "netpbm": {
         "type": "svn",
-        "url": "http://netpbm.svn.sourceforge.net/svnroot/netpbm/advanced"
+        "url": "http://netpbm.svn.sourceforge.net/svnroot/netpbm"
+        "layout": {
+            "trunk": "trunk",
+            "branches": "{advanced,stable,super_stable}",
+            "tags": "release_number"
+        }
     },
     "wget": {
         "type": "bzr",
@@ -273,7 +281,8 @@
     },
     "pcre": {
         "type": "svn",
-        "url": "svn://vcs.exim.org/pcre/code/trunk"
+        "url": "svn://vcs.exim.org/pcre/code/",
+        "layout": "standard"
     },
     "gnulib": {
         "type": "git",

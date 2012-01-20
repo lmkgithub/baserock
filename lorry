@@ -160,10 +160,10 @@ class Lorry(cliapp.Application):
                                   spec['url'], gitdir])
             else:
                 layout = spec["layout"]
-                self.run_program(['git', 'svn', 'clone', spec['url'],
+                self.run_program(['git', 'svn', 'clone', spec['url'], gitdir,
                                   '--tags',     layout["tags"],
                                   '--trunk',    layout["trunk"],
-                                  '--branches', layout["branches"]],cwd=gitdir)
+                                  '--branches', layout["branches"]])
         else:
             self.progress('.. updating existing clone')
             self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)

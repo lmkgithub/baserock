@@ -1,0 +1,11 @@
+{
+    "texlive": {
+        "type": "svn",
+        "url": "svn://tug.org/texlive/",
+        "layout": {
+            "trunk": "trunk/Build/source",
+            "branches": "branches/*/Build/source",
+            "tags": "tags/*/Build/source"
+        }
+    }
+}

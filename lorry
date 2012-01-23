@@ -160,10 +160,10 @@ class Lorry(cliapp.Application):
             self.progress('.. doing initial clone')
             os.mkdir(gitdir)
             if "layout" not in spec:
-                self.run_program(['git', 'svn', 'clone', '--prefix=origin/',
+                self.run_program(['git', 'svn', 'clone', '--prefix=svn/',
                                   spec['url'], gitdir])
             elif spec["layout"] == "standard":
-                self.run_program(['git', 'svn', 'clone', '--prefix=origin/',
+                self.run_program(['git', 'svn', 'clone', '--prefix=svn/',
                                   '--stdlayout', spec['url'], gitdir])
             else:
                 layout = spec["layout"]
@@ -171,12 +171,12 @@ class Lorry(cliapp.Application):
                 # already have one, this does not work with {a,b} globs
                 self.run_program(['git', 'svn', 'clone', spec['url'], gitdir,
                                   '--trunk', layout["trunk"],
-                                  '--prefix=origin/'])
+                                  '--prefix=svn/'])
                 self.run_program(['git', 'config', 'svn-remote.svn.branches',
-                                 layout["branches"] + ':refs/remotes/origin/*'],
+                                  layout["branches"] + ':refs/remotes/svn/*'],
                                  cwd=gitdir)
                 self.run_program(['git', 'config', 'svn-remote.svn.tags',
-                                layout["tags"] + ':refs/remotes/origin/tags/*'],
+                                  layout["tags"] + ':refs/remotes/svn/tags/*'],
                                  cwd=gitdir)
                 self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
         else:

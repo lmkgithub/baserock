@@ -78,23 +78,38 @@ class Lorry(cliapp.Application):
         if not os.path.exists(dirname):
             os.mkdir(dirname)
         gitdir = os.path.join(dirname, 'git')
-        table[vcstype](dirname, gitdir, spec)
+        table[vcstype](name, dirname, gitdir, spec)
         if self.settings['repack']:
             self.progress('.. repacking %s git repository' % name)
             self.run_program(['git', 'repack', '-a', '-d', '--depth=250',
                               '--window=250'], cwd=gitdir)
         if not self.settings['pull-only']:
-            self.push_to_gitorious(name, gitdir)
-        
-    def mirror_git(self, dirname, gitdir, spec):
+            self.push_to_gitorious(gitdir)
+
+    def add_remote(self, name, gitdir, pushrefspec=['refs/heads/*:refs/heads/*',
+                                                    'refs/tags/*:refs/tags/*']):
+        """Add gitorious as a remote to gitdir with optional refpecs for push"""
+        url = ('%s/%s.git' % (self.settings['gitorious-base-url'], name))
+        self.progress('.. adding %s as a remote to %s' % (url, name))
+        self.run_program(['git', 'remote', 'add', 'gitorious', url], cwd=gitdir)
+        if len(pushrefspec) >= 1:
+            self.run_program(['git', 'config', 'remote.gitorious.push',
+                              pushrefspec[0]], cwd=gitdir)
+        for refspec in pushrefspec[1:]:
+            self.run_program(['git', 'config', '--add', 'remote.gitorious.push',
+                              refspec], cwd=gitdir)
+
+    def mirror_git(self, project_name, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
             self.run_program(['git', 'clone', '--mirror', spec['url'], gitdir])
+            # init gitorious remote
+            self.add_remote(project_name, gitdir)
         else:
             self.progress('.. updating existing clone')
             self.run_program(['git', 'fetch', '--all'], cwd=gitdir)
 
-    def gitify_bzr(self, dirname, gitdir, spec):
+    def gitify_bzr(self, project_name, dirname, gitdir, spec):
         bzrdir = os.path.join(dirname, 'bzr')
         # check if repo exists
         if not os.path.exists(bzrdir):
@@ -105,6 +120,7 @@ class Lorry(cliapp.Application):
             self.progress('.. creating git repo')
             os.mkdir(gitdir)
             self.run_program(['git', 'init', gitdir])
+            self.add_remote(project_name, gitdir)
 
         # branches are the listed branches, plus the branch specified in url
         if 'branches' in spec:
@@ -112,7 +128,6 @@ class Lorry(cliapp.Application):
         else:
             branches = {}
         if 'url' in spec:
-            #branches.append(spec['url'])
             branches['trunk'] = spec['url']
         logging.debug('all branches: %s' % repr(branches))
 
@@ -155,42 +170,61 @@ class Lorry(cliapp.Application):
             self.progress('.. removing temporary fast-export file ' + exports[branch])
             os.remove(exports[branch])
 
-    def gitify_svn(self, dirname, gitdir, spec):
+    def tagify_svn_branches(self, gitdir):
+        out = self.run_program(['git', 'for-each-ref', '--format=%(refname)',
+                               'refs/remotes/svn/tags'], cwd=gitdir)
+        tagbranchrefs = set(out.splitlines())
+        tags = set(self.run_program(['git', 'tag'], cwd=gitdir).splitlines())
+        for ref in tagbranchrefs:
+            tag = ref.split('/')[-1]
+            if tag not in tags:
+                self.run_program(['git', 'tag', '-a', '-m', '', tag, ref],
+                                 cwd=gitdir)
+
+    def gitify_svn(self, project_name, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
             os.mkdir(gitdir)
             if "layout" not in spec:
-                self.run_program(['git', 'svn', 'clone', '--prefix=svn/',
-                                  spec['url'], gitdir])
-            elif spec["layout"] == "standard":
-                self.run_program(['git', 'svn', 'clone', '--prefix=svn/',
-                                  '--stdlayout', spec['url'], gitdir])
+                self.run_program(['git', 'svn', 'init', spec['url'], 
+                                  '--prefix=svn/heads/', gitdir])
             else:
                 layout = spec["layout"]
-                # git-svn will append /* to branches or tags that don't
-                # already have one, this does not work with {a,b} globs
-                self.run_program(['git', 'svn', 'clone', spec['url'], gitdir,
+                # if standard layour specified, fill in the defaults
+                if layout == "standard":
+                    layout = { "trunk": "trunk",
+                               "tags": "tags/*",
+                               "branches": "branches/*" }
+                # init the repo and configure svn fetch refspecs
+                self.run_program(['git', 'svn', 'init', spec['url'], gitdir,
                                   '--trunk', layout["trunk"],
-                                  '--prefix=svn/'])
+                                  '--prefix=svn/heads/'])
                 self.run_program(['git', 'config', 'svn-remote.svn.branches',
-                                  layout["branches"] + ':refs/remotes/svn/*'],
-                                 cwd=gitdir)
+                                layout["branches"]+':refs/remotes/svn/heads/*'],
+                                  cwd=gitdir)
                 self.run_program(['git', 'config', 'svn-remote.svn.tags',
                                   layout["tags"] + ':refs/remotes/svn/tags/*'],
                                  cwd=gitdir)
-                self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
+            # git push should push the remote branches as git-svn does not make
+            # local copies
+            self.add_remote(project_name, gitdir,
+                            ['refs/remotes/svn/heads/*:refs/heads/*',
+                             'refs/remotes/svn/tags/*:refs/tags/*'])
         else:
             self.progress('.. updating existing clone')
-            # update the remote tracking branch
-            self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
-            # update the master branch with these changes
-            self.run_program(['git', 'svn', 'rebase'], cwd=gitdir)
+        # update the remote tracking branches
+        self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
+        # convert any tag branches into real tags
+        self.tagify_svn_branches(gitdir)
 
-    def gitify_cvs(self, dirname, gitdir, spec):
+    def gitify_cvs(self, project_name, dirname, gitdir, spec):
         self.run_program(['git', 'cvsimport', '-d', spec['url'],
                           '-C', gitdir, spec['module']])
+        out = self.run_program(['git', 'remote'], cwd=gitdir)
+        if 'gitorious' not in out.splitlines():
+            self.add_remote(project_name, gitdir)
 
-    def gitify_hg(self, dirname, gitdir, spec):
+    def gitify_hg(self, project_name, dirname, gitdir, spec):
         hgdir = os.path.join(dirname, 'hg')
         if os.path.exists(hgdir):
             self.progress('.. updating hg branch')
@@ -201,12 +235,13 @@ class Lorry(cliapp.Application):
 
         if not os.path.exists(gitdir):
             self.run_program(['git', 'init', gitdir])
+            self.add_remote(project_name, gitdir)
         
         self.progress('.. fast-exporting into git')
         self.run_program(['hg-fast-export', '--quiet', '-r', '../hg'], 
                          cwd=gitdir)
 
-    def gitify_tarball(self, dirname, gitdir, spec):
+    def gitify_tarball(self, project_name, dirname, gitdir, spec):
         tardest = os.path.join(dirname, 'tarball')
         if not os.path.exists(tardest):
             with open(tardest, 'w') as tarfile:
@@ -231,21 +266,12 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'add', '.'], cwd=gitdir)
             self.run_program(['git', 'commit', '-m', 'Tarball conversion'],
                              cwd=gitdir)
+            self.add_remote(project_name, gitdir)
             
 
-    def push_to_gitorious(self, project_name, gitdir):
-        out = self.run_program(['git', 'remote', 'show'], cwd=gitdir)
-        if 'gitorious' not in out.splitlines():
-            self.progress('.. adding gitorious as a remote')
-            url = ('%s/%s.git' % 
-                   (self.settings['gitorious-base-url'], project_name))
-            self.run_program(['git', 'remote', 'add', 'gitorious', url],
-                             cwd=gitdir)
-
-        self.progress('.. pushing branches to gitorious')
-        self.run_program(['git', 'push', '--all', 'gitorious'], cwd=gitdir)
-        self.progress('.. pushing tags to gitorious')
-        self.run_program(['git', 'push', '--tags', 'gitorious'], cwd=gitdir)
+    def push_to_gitorious(self, gitdir):
+        self.progress('.. pushing to gitorious')
+        self.run_program(['git', 'push', 'gitorious'], cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         if self.settings['command-stdout']:

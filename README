@@ -21,6 +21,164 @@ Implementation
 Lorry relies on git-svn, git-cvsimport, and bzr fast-export for the
 conversions. You need to have them installed.
 
+Lorry file specification
+------------------------
+
+Lorry files are json dicts where the repository names are the keys and the
+values are dicts with the data required to mirror it.
+
+So a simple lorry that mirrors a git project looks like
+
+	{
+	    "git": {
+	        "type": "git",
+	        "url": "git://github.com/gitster/git.git"
+	    }
+	}
+
+Multiple repositories can be specified in the same .lorry file, in which case
+all of them will be processed by lorry. The following shows two repositories.
+
+	{
+	    "git": {
+	        "type": "git",
+	        "url": "git://github.com/gitster/git.git"
+	    },
+	    "curl": {
+	        "type": "git",
+	        "url": "git://github.com/bagder/curl.git"
+	    }
+	}
+
+Lorry can import other version control systems into git.
+
+### Mercurial
+Mercurial is very similar to git, just change the type field to "hg"
+	{
+	    "sudo": {
+	        "type": "hg",
+	        "url": "http://www.sudo.ws/repos/sudo"
+	    }
+	}
+
+### Bazaar
+Repositories and branches in Bazaar mean different things to Git.
+The practical difference for Lorry is that it is not possible to have
+a url for a repository, urls map directly to branches.
+
+	{
+	    "libpipeline": {
+	        "type": "bzr",
+	        "branches": {
+	            "trunk": "http://bzr.savannah.gnu.org/r/libpipeline/trunk"
+	        }
+	    }
+	}
+
+For convenience if the project only needs one branch mirrored, the url
+is assumed to be the master branch.
+
+	{
+	    "libpipeline": {
+	        "type": "bzr",
+	        "url": "http://bzr.savannah.gnu.org/r/libpipeline/trunk"
+	    }
+	}
+
+### Subversion
+Subversion can be used similarly to git if only one branch is needed
+	{
+	    "mpc": {
+	        "type": "svn",
+	        "url": "svn://scm.gforge.inria.fr/svn/mpc/trunk",
+	    }
+	}
+To support all the branches and tags a layout needs to be specified as svn is
+very flexible with the possible layouts, however the most common is to have the
+working branch in a directory called trunk, and the branches and tags in 
+respectively named subdirectories.
+Because this is so common "standard" can be used as the layout
+	{
+	    "mpc": {
+	        "type": "svn",
+	        "url": "svn://scm.gforge.inria.fr/svn/mpc",
+	        "layout": "standard"
+	    }
+	}
+This is equivalent to
+	{
+	    "mpc": {
+	        "type": "svn",
+	        "url": "svn://scm.gforge.inria.fr/svn/mpc",
+	        "layout": {
+	            "trunk": "trunk",
+	            "branches": "branches/*",
+	            "tags": "tags/*"
+	        }
+	    }
+	}
+Trunk is the path to the directory where the main branch is located.
+Branches and Tags are glob expressions to allow finer control over which paths
+are used.
+Texlive keeps a lot of resources in their svn repository, we are only concerned
+with the source code, so this layout should select the correct subdirectory for
+each branch.
+	{
+	    "texlive": {
+		"type": "svn",
+		"url": "svn://tug.org/texlive/",
+		"layout": {
+		    "trunk": "trunk/Build/source",
+		    "branches": "branches/*/Build/source",
+		    "tags": "tags/*/Build/source"
+		}
+	    }
+	}
+Brace expansions can be used to specify subsets of paths.
+Netpbm for example, keeps all its branches in the root directory
+	{
+	    "netpbm": {
+		"type": "svn",
+		"url": "https://netpbm.svn.sourceforge.net/svnroot/netpbm",
+		"layout": {
+		    "trunk": "trunk",
+		    "branches": "{advanced,stable,super_stable}",
+		    "tags": "release_number/*"
+		}
+	    }
+	}
+
+### CVS
+The url for CVS repositories is the CVSROOT string. The module is required as
+cvs repositories usually have multiple modules, the module is usually the same
+as the project name.
+
+	{
+	    "openssl": {
+		"type": "cvs",
+		"url": "anonymous@cvs.openssl.org:/openssl-cvs",
+		"module": "openssl"
+	    }
+	}
+
+### Tarball
+Some projects are old enough to pre-date version control, so the source is only
+available in tarballs.
+Tarball support is fairly limited, the compression format is currently specified
+as the long form option without the --, so --gzip becomes gzip.
+Strip removes that many components from the paths. This is necessary as tarballs
+often have the folder name as the first component.
+
+{
+    "bc": {
+        "type": "tarball",
+        "compression": "gzip",
+        "strip": 1,
+        "url": "http://ftp.gnu.org/gnu/bc/bc-1.06.tar.gz"
+    }
+}
+
+NOTE: tarball imports may not give the same sha.
 
 Legal stuff
 -----------

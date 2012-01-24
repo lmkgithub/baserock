@@ -170,17 +170,6 @@ class Lorry(cliapp.Application):
             self.progress('.. removing temporary fast-export file ' + exports[branch])
             os.remove(exports[branch])
 
-    def tagify_svn_branches(self, gitdir):
-        out = self.run_program(['git', 'for-each-ref', '--format=%(refname)',
-                               'refs/remotes/svn/tags'], cwd=gitdir)
-        tagbranchrefs = set(out.splitlines())
-        tags = set(self.run_program(['git', 'tag'], cwd=gitdir).splitlines())
-        for ref in tagbranchrefs:
-            tag = ref.split('/')[-1]
-            if tag not in tags:
-                self.run_program(['git', 'tag', '-a', '-m', '', tag, ref],
-                                 cwd=gitdir)
-
     def gitify_svn(self, project_name, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
@@ -214,8 +203,6 @@ class Lorry(cliapp.Application):
             self.progress('.. updating existing clone')
         # update the remote tracking branches
         self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
-        # convert any tag branches into real tags
-        self.tagify_svn_branches(gitdir)
 
     def gitify_cvs(self, project_name, dirname, gitdir, spec):
         self.run_program(['git', 'cvsimport', '-d', spec['url'],

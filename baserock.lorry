@@ -217,7 +217,7 @@
     },
     "netpbm": {
         "type": "svn",
-        "url": "http://netpbm.svn.sourceforge.net/svnroot/netpbm"
+        "url": "http://netpbm.svn.sourceforge.net/svnroot/netpbm",
         "layout": {
             "trunk": "trunk",
             "branches": "{advanced,stable,super_stable}",

@@ -86,13 +86,6 @@ is assumed to be the master branch.
 	}
 
 ### Subversion
-Subversion can be used similarly to git if only one branch is needed
-	{
-	    "mpc": {
-	        "type": "svn",
-	        "url": "svn://scm.gforge.inria.fr/svn/mpc/trunk",
-	    }
-	}
 To support all the branches and tags a layout needs to be specified as svn is
 very flexible with the possible layouts, however the most common is to have the
 working branch in a directory called trunk, and the branches and tags in 
@@ -144,6 +137,21 @@ Netpbm for example, keeps all its branches in the root directory
 		    "trunk": "trunk",
 		    "branches": "{advanced,stable,super_stable}",
 		    "tags": "release_number/*"
+		}
+	    }
+	}
+
+Note that git-svn can provide better history tracking if the url is as close to
+the root of the repository as possible, so it may be more effective if the lorry
+was specified similar to this, assuming svnroot is the real root of the repo
+	{
+	    "netpbm": {
+		"type": "svn",
+		"url": "https://netpbm.svn.sourceforge.net/svnroot/",
+		"layout": {
+		    "trunk": "netpbm/trunk",
+		    "branches": "netpbm/{advanced,stable,super_stable}",
+		    "tags": "netpbm/release_number/*"
 		}
 	    }
 	}

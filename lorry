@@ -20,10 +20,16 @@ import json
 import logging
 import os
 import urllib2
+import string
 
 
 __version__ = '0.0'
 
+_valid_chars = string.digits + string.letters + ':%_'
+
+def quote_url(url):
+    transl = lambda x: x if x in _valid_chars else '_'
+    return ''.join([transl(x) for x in url])
 
 class Lorry(cliapp.Application):
 
@@ -47,10 +53,17 @@ class Lorry(cliapp.Application):
                               'been updated (default: %default)', default=True)
         self.settings.string(['command-stdout'],
                              'write the stdout of commands to this file',
-                             default=None)
+                             metavar='FILE', default=None)
         self.settings.string(['command-stderr'],
                              'write the stderr of commands to this file',
-                             default=None)
+                             metavar='FILE', default=None)
+        self.settings.choice(['bundle'], ['first', 'never', 'always'],
+                             'create bundles of git repositories.'
+                             'first will only bundle if there is not already a '
+                             'bundle in BUNDLES (default: first)')
+        self.settings.string(['bundle-dest'],
+                             'put created bundles in BUNDLES',
+                             metavar='BUNDLES')
 
     def process_args(self, args):
         for arg in args:
@@ -60,7 +73,17 @@ class Lorry(cliapp.Application):
             for name in sorted(specs.keys()):
                 self.gitify(name, specs[name])
         self.progress('Done')
-    
+
+
+    def bundle(self, name, gitdir):
+        if self.settings['bundle'] == 'never': return
+        bundlename = "%s/%s" % (self.settings['gitorious-base-url'], name)
+        path = os.path.join(self.settings['bundle-dest'], quote_url(bundlename))
+        if not os.path.exists(path) or self.settings['bundle'] == 'always':
+            self.progress('.. building bundle %s' % bundlename)
+            self.run_program(['git', 'bundle', 'create', path, '--branches',
+                              '--tags'], cwd=gitdir)
+
     def gitify(self, name, spec):
         self.progress('Getting %s' % name)
         table = {
@@ -83,6 +106,7 @@ class Lorry(cliapp.Application):
             self.progress('.. repacking %s git repository' % name)
             self.run_program(['git', 'repack', '-a', '-d', '--depth=250',
                               '--window=250'], cwd=gitdir)
+        self.bundle(name, gitdir)
         if not self.settings['pull-only']:
             self.push_to_gitorious(gitdir)
 
@@ -107,7 +131,7 @@ class Lorry(cliapp.Application):
             self.add_remote(project_name, gitdir)
         else:
             self.progress('.. updating existing clone')
-            self.run_program(['git', 'fetch', '--all'], cwd=gitdir)
+            self.run_program(['git', 'fetch', 'origin'], cwd=gitdir)
 
     def gitify_bzr(self, project_name, dirname, gitdir, spec):
         bzrdir = os.path.join(dirname, 'bzr')
@@ -174,31 +198,27 @@ class Lorry(cliapp.Application):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
             os.mkdir(gitdir)
-            if "layout" not in spec:
-                self.run_program(['git', 'svn', 'init', spec['url'], 
-                                  '--prefix=svn/heads/', gitdir])
-            else:
-                layout = spec["layout"]
-                # if standard layour specified, fill in the defaults
-                if layout == "standard":
-                    layout = { "trunk": "trunk",
-                               "tags": "tags/*",
-                               "branches": "branches/*" }
-                # init the repo and configure svn fetch refspecs
-                self.run_program(['git', 'svn', 'init', spec['url'], gitdir,
-                                  '--trunk', layout["trunk"],
-                                  '--prefix=svn/heads/'])
-                self.run_program(['git', 'config', 'svn-remote.svn.branches',
-                                layout["branches"]+':refs/remotes/svn/heads/*'],
-                                  cwd=gitdir)
-                self.run_program(['git', 'config', 'svn-remote.svn.tags',
-                                  layout["tags"] + ':refs/remotes/svn/tags/*'],
-                                 cwd=gitdir)
-            # git push should push the remote branches as git-svn does not make
-            # local copies
-            self.add_remote(project_name, gitdir,
-                            ['refs/remotes/svn/heads/*:refs/heads/*',
-                             'refs/remotes/svn/tags/*:refs/tags/*'])
+            layout = spec["layout"]
+            # if standard layour specified, fill in the defaults
+            if layout == "standard":
+                layout = { "trunk": "trunk",
+                           "tags": "tags/*",
+                           "branches": "branches/*" }
+            # init the repo then manually set the refspecs to fetch into local
+            # git-svn can apparently provide better history tracking by fetching
+            # the root of the repository
+            # git-svn will convert branch, trunk and tag paths to allow this,
+            # but it is simpler to disable it and do it manually
+            self.run_program(['git', 'svn', 'init', spec['url'], gitdir,
+                              '--svn-remote=svn', '--no-minimize-url'])
+            self.run_program(['git', 'config', 'svn-remote.svn.fetch',
+                              layout["trunk"]+':refs/heads/master'], cwd=gitdir)
+            self.run_program(['git', 'config', 'svn-remote.svn.branches',
+                              layout["branches"] + ':refs/heads/*'], cwd=gitdir)
+            self.run_program(['git', 'config', 'svn-remote.svn.tags',
+                              layout["tags"] + ':refs/tags/*'],
+                             cwd=gitdir)
+            self.add_remote(project_name, gitdir)
         else:
             self.progress('.. updating existing clone')
         # update the remote tracking branches

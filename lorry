@@ -71,7 +71,11 @@ class Lorry(cliapp.Application):
             with open(arg) as f:
                 specs = json.load(f)
             for name in sorted(specs.keys()):
-                self.gitify(name, specs[name])
+               try:
+                    print 'Getting: ',name
+                    self.gitify(name, specs[name])
+               except Exception,e:
+                    print 'Exception Top:',e
         self.progress('Done')
 
 
@@ -109,7 +113,7 @@ class Lorry(cliapp.Application):
         self.bundle(name, gitdir)
         if not self.settings['pull-only']:
             self.push_to_gitorious(gitdir)
-
+ 
     def add_remote(self, name, gitdir, pushrefspec=['refs/heads/*:refs/heads/*',
                                                     'refs/tags/*:refs/tags/*']):
         """Add gitorious as a remote to gitdir with optional refpecs for push"""

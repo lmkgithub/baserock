@@ -75,7 +75,8 @@ class Lorry(cliapp.Application):
                     print 'Getting: ',name
                     self.gitify(name, specs[name])
                except Exception,e:
-                    print 'Exception Top:',e
+                    print 'Exception:',e
+                    logging.debug('Mirroring Error: %s' %e)
         self.progress('Done')
 
 

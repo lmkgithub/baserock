@@ -254,11 +254,6 @@
         "type": "git",
         "url": "git://git.savannah.gnu.org/tar.git"
     },
-    "texinfo": {
-        "type": "cvs",
-        "url": ":pserver:anonymous@cvs.savannah.gnu.org:/sources/texinfo",
-        "module": "texinfo"
-    },
     "vim": {
         "type": "hg",
         "url": "https://vim.googlecode.com/hg/"

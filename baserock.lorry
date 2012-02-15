@@ -317,6 +317,11 @@
             "branches": "branches/*/Build/source",
             "tags": "tags/*/Build/source"
         }
+    },
+    "openssh": {
+        "type": "cvs",
+        "url": "anoncvs@anoncvs.mindrot.org:/cvs",
+        "module": "openssh"
     }
 }
 

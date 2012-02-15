@@ -79,6 +79,10 @@ class Lorry(cliapp.Application):
                     status += 1
                     print 'Exception:',e
                     logging.debug('Mirroring Error: %s' %e)
+        if status > 0 :
+           logging.debug('Total Mirrors failed: %d' %status)
+           status = 1
+ 
         self.progress('Done')
         #print 'total failed:',status
         sys.exit(status) 

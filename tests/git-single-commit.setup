@@ -20,9 +20,6 @@
 
 set -e
 
-# clean up the data directory
-test -d "$DATADIR" && rm -rf "$DATADIR"/*
-
 # create the repository
 repo="$DATADIR/git-test-repo"
 mkdir "$repo"
@@ -47,4 +44,4 @@ cat <<EOF > $DATADIR/git-test-repo.lorry
 EOF
 
 # create the working directory
-mkdir "$DATADIR/work-dir"
+test -d "$DATADIR/work-dir" || mkdir "$DATADIR/work-dir"

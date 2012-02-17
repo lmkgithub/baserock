@@ -26,6 +26,18 @@ bzrTest()
         } " > atl.lorry
   echo "running bzr lorry test"
   ./lorry --pull-only --log=atl.log  atl.lorry  -w `pwd`/workd
+  cd workd/BZR/git 
+  test=`git branch`
+  if [ "$test" = "  trunk" ]
+  then
+    echo "bzr repo success in lorry"
+    cd ../../../
+    rm -fr workd/BZR repobzr
+  else
+    echo "bzr repo failed in lorry"
+    exit 1
+  fi
+  
   
   
 }
@@ -69,7 +81,20 @@ tarTest()
         } " > atl.lorry
    echo "going to tar gzip and lzma test"
   ./lorry --pull-only --log=atl.log atl.lorry -w `pwd`/workd 
-   
+  test1=`find workd/tarlzma/git/ -name testg-l.txt`
+  test2=`find workd/targzip/git/ -name testg-l.txt`
+  test3=`find workd/tarbzip2/git/ -name testg-l.txt`
+  if  [ "$test1" = ""  ] || [ "$test2" = ""  ] || [ "$test3" = "" ] 
+  then
+
+     echo "tar repo fail in lorry test"
+     exit 1
+  else
+     echo "tar repo success in lorry test"
+     rm -fr workd/tar* repotar
+     rm -fr repotar.tar.*
+  fi
+ 
 
 }
 svnTest()
@@ -86,6 +111,7 @@ svnTest()
    svnadmin create `pwd`/reposvn
    #changes to configuration svn files
    sed -r -e's/^# (password-db.*)/\1/g' -i `pwd`/reposvn/conf/svnserve.conf  
+   
    sed -r -e's/^# (anon-access.*)/\1/g' -i `pwd`/reposvn/conf/svnserve.conf  
    sed -r -e's/^# (auth-access.*)/\1/g' -i `pwd`/reposvn/conf/svnserve.conf
    echo "adnan = test" >> `pwd`/reposvn/conf/passwd #creat test password
@@ -111,6 +137,18 @@ svnTest()
         } " > atl.lorry
    echo "going to run svn lorry test"
   ./lorry --pull-only --log=atl.log atl.lorry -w `pwd`/workd
+  cd workd/SVN/git 
+  test=`git branch`
+  if [ -z  "$test"  ]
+  then
+
+     echo "svn repo fail in lorry test"
+     exit 1
+  else
+     echo "svn repo success in lorry test"
+     cd ../../../
+     rm -fr workd/SVN   reposvn
+  fi
   
    
 }
@@ -140,7 +178,20 @@ gitTest()
         } " > atl.lorry  
   echo "going to run git lorry test"
   ./lorry --pull-only --log=atl.log atl.lorry -w `pwd`/workd
-  
+  cd workd/git/git
+  test=`git branch`
+  if [ "$test" = "* master"  ]
+  then
+
+     echo "git repo success in lorry test"
+     cd  ../../../
+     rm -fr workd/git repogit
+  else
+     echo "git repo fail in lorry test"
+     exit 1
+  fi
+ 
+    
 }
 
 hgTest()
@@ -169,6 +220,19 @@ hgTest()
         } " > atl.lorry
   echo "going to run hg lorry test" `pwd`
   ./lorry --pull-only  --log=lorry.log atl.lorry -w `pwd`/workd    
+
+  test=`find workd/hg/hg/ -name readme`
+  if [ -z  "$test"  ]
+  then
+
+     echo "hg repo fail in lorry test"
+     exit 1
+  else
+     echo "hg repo success in lorry test"
+     rm -fr workd/hg repohg
+     
+  fi
+
 
 }
 
@@ -206,13 +270,25 @@ cvsTest()
   echo "going to run cvs lorry test" `pwd`
   
   ./lorry --pull-only  --log=lorry.log atl.lorry -w `pwd`/workd
-  
+ 
+  test=`find workd/cvs/git/ -name readmetoo` 
+  if [ -z  "$test"  ]
+  then
 
+     echo "cvs repo fail in lorry test"
+     exit 1
+  else
+     echo "cvs repo success in lorry test"
+     rm -fr workd/cvs repocvs
+  fi
+    
+  
 }
 main()
 {
   ##initial requriment for test
-  rm -fr workd
+  #rm -fr workd
+  rm -fr repobzr/  repogit/ reposvn/ repotar repohg/ repocvs/ repotar.tar.* workd/ atl.*
   mkdir workd
 }
 

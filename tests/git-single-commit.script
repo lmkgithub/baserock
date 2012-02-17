@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# Tests converting a simple git repository to git.
+#
+# Copyright (C) 2012  Codethink Limited
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+
+set -e
+
+
+logfile="$DATADIR/git-test-repo.log"
+workdir="$DATADIR/work-dir"
+
+./lorry --pull-only --log="$logfile" --working-area="$workdir" \
+  "$DATADIR/git-test-repo.lorry" > /dev/null 2> /dev/null
+
+cd "$workdir/git-test-repo/git/"
+
+# list the branches
+git show-ref | cut -d' ' -f2
+
+# cat the test file
+git cat-file blob master:test.txt
+
+# check out the trunk branch
+cd "$workdir/git-test-repo"
+git clone --quiet git temporary-clone
+cd temporary-clone
+git checkout --quiet master
+
+# list the commit messages
+git log --pretty='%s'

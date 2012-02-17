@@ -25,7 +25,7 @@ logfile="$DATADIR/bzr-test-repo.log"
 workdir="$DATADIR/work-dir"
 
 ./lorry --pull-only --log="$logfile" --working-area="$workdir" \
-  "$DATADIR/bzr-test-repo.lorry" &> /dev/null
+  "$DATADIR/bzr-test-repo.lorry" > /dev/null 2> /dev/null
 
 #export GIT_DIR="$workdir/bzr-test-repo/git/.git"
 cd "$workdir/bzr-test-repo/git/"

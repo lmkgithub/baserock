@@ -19,4 +19,4 @@
 
 set -e
 
-fakeroot cmdtest -c ./lorry tests
+cmdtest -c ./lorry tests

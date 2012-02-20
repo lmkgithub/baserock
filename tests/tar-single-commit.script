@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Tests converting a simple SVN repository to git.
+# Tests converting tarballs into to git repositories.
 #
 # Copyright (C) 2012  Codethink Limited
 # 

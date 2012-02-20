@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Creates a CVS repository with a single file and a single commit.
+# Creates an SVN repository with a single file and a single commit.
 #
 # Copyright (C) 2012  Codethink Limited
 # 

@@ -27,19 +27,16 @@ workdir="$DATADIR/work-dir"
 ./lorry --verbose --pull-only --log="$logfile" --working-area="$workdir" \
   "$DATADIR/hg-test-repo.lorry" > /dev/null 2> /dev/null
 
-cd "$workdir/hg-test-repo/hg/"
+# verify that the git repository was created correctly
+(
+  cd "$workdir/git-test-repo/git/"
 
-# list the branches
-hg branches | cut -d' ' -f1
+  # list the branches
+  git show-ref | cut -d' ' -f2
 
-# cat the test file
-hg cat -r default test.txt
+  # cat the test file
+  git cat-file blob master:test.txt
 
-# check out the trunk branch
-cd "$workdir/hg-test-repo"
-hg clone --quiet hg temporary-clone
-cd temporary-clone
-hg update --quiet -c default
-
-# list the commit messages
-hg log --template '{desc|firstline}\n'
+  # list the commit messages
+  git log --pretty='%s' master
+)

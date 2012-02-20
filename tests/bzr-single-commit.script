@@ -27,16 +27,16 @@ workdir="$DATADIR/work-dir"
 ./lorry --pull-only --log="$logfile" --working-area="$workdir" \
   "$DATADIR/bzr-test-repo.lorry" > /dev/null 2> /dev/null
 
-cd "$workdir/bzr-test-repo/git/"
+# verify that the git repository was set up correctly
+(
+  cd "$workdir/bzr-test-repo/git/"
 
-# list the branches
-git show-ref | cut -d' ' -f2
+  # list the branches
+  git show-ref | cut -d' ' -f2
 
-# cat the test file
-git cat-file blob trunk:test.txt
+  # cat the test file
+  git cat-file blob trunk:test.txt
 
-# check out the trunk branch
-git checkout --quiet trunk
-
-# list the commit messages
-git log --pretty='%s'
+  # list the commit messages
+  git log --pretty='%s' trunk
+)

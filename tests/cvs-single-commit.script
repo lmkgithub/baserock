@@ -20,24 +20,22 @@
 
 set -e
 
-
 logfile="$DATADIR/cvs-test-repo.log"
 workdir="$DATADIR/work-dir"
 
-# ./lorry --pull-only --log="$logfile" --working-area="$workdir" \
-#   "$DATADIR/cvs-test-repo.lorry" # > /dev/null 2> /dev/null
-# 
-# #export GIT_DIR="$workdir/cvs-test-repo/git/.git"
-# cd "$workdir/cvs-test-repo/git/"
-# 
-# # list the branches
-# git show-ref | cut -d' ' -f2
-# 
-# # cat the test file
-# git cat-file blob trunk:test.txt
-# 
-# # check out the trunk branch
-# git checkout --quiet trunk
-# 
-# # list the commit messages
-# git log --pretty='%s'
+./lorry --pull-only --log="$logfile" --working-area="$workdir" \
+  "$DATADIR/cvs-test-repo.lorry" > /dev/null 2> /dev/null
+
+# verify that the git repository was created successfully
+(
+  cd "$workdir/cvs-test-repo/git/"
+
+  # list the branches
+  git show-ref | cut -d' ' -f2
+
+  # cat the test file
+  git cat-file blob master:test.txt
+
+  # list the commit messages
+  git log --pretty='%s' master
+)

@@ -244,7 +244,7 @@ class Lorry(cliapp.Application):
         self.run_program(['git', 'svn', 'fetch'], cwd=gitdir)
 
     def gitify_cvs(self, project_name, dirname, gitdir, spec):
-        self.run_program(['git', 'cvsimport', '-d', spec['url'],
+        self.run_program(['git', 'cvsimport', '-a', '-d', spec['url'],
                           '-C', gitdir, spec['module']])
         out = self.run_program(['git', 'remote'], cwd=gitdir)
         if 'gitorious' not in out.splitlines():

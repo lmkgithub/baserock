@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Tests converting a simple git repository to git.
+# Tests converting a simple SVN repository to git.
 #
 # Copyright (C) 2012  Codethink Limited
 # 
@@ -20,16 +20,15 @@
 
 set -e
 
-
-logfile="$DATADIR/git-test-repo.log"
+logfile="$DATADIR/svn-test-repo.log"
 workdir="$DATADIR/work-dir"
 
 ./lorry --pull-only --log="$logfile" --working-area="$workdir" \
-  "$DATADIR/git-test-repo.lorry" > /dev/null 2> /dev/null
+  "$DATADIR/svn-test-repo.lorry" > /dev/null 2> /dev/null
 
-# verify that the git repository was set up correctly
+# verify that the git repository was created successfully
 (
-  cd "$workdir/git-test-repo/git/"
+  cd "$workdir/svn-test-repo/git/"
 
   # list the branches
   git show-ref | cut -d' ' -f2

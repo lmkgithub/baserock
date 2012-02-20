@@ -67,6 +67,13 @@ class Lorry(cliapp.Application):
 
     def process_args(self, args):
         status = 0
+        
+        if self.settings['working-area'] == '' :
+            print 'No working area defined going to use "workd" directory'
+            self.settings['working-area'] = 'workd'
+        if not os.path.exists(self.settings['working-area']): 
+            os.makedirs(self.settings['working-area'])
+
         for arg in args:
             self.progress('Processing spec file %s' % arg)
             with open(arg) as f:

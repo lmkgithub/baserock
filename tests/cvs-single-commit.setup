@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Creates a bzr repository with a single file and a single commit.
+# Creates a CVS repository with a single file and a single commit.
 #
 # Copyright (C) 2012  Codethink Limited
 # 
@@ -21,25 +21,36 @@
 set -e
 
 # create the repository
-repo="$DATADIR/bzr-test-repo"
-mkdir "$repo"
-cd "$repo"
-bzr init --quiet trunk
+repo="$DATADIR/cvs-test-repo"
+export CVSROOT="$repo"
+export CVS_RSH=
+cvs init
+
+# create a local working copy
+workingcopy="$DATADIR/cvs-test-checkout"
+mkdir "$workingcopy"
+cd "$workingcopy"
+cvs checkout CVSROOT
+cd "$workingcopy/CVSROOT"
 
 # add the test file
-cd "$repo/trunk"
 echo "first line" > test.txt
-bzr add --quiet test.txt
+cvs -Q add test.txt
 
 # make a commit
-bzr commit --quiet -m "first commit"
+cvs -Q commit -m "first commit"
+
+# delete the working copy
+cd "$DATADIR"
+rm -r "$workingcopy"
 
 # create the .lorry file for the repository
-cat <<EOF > $DATADIR/bzr-test-repo.lorry
+cat <<EOF > $DATADIR/cvs-test-repo.lorry
 {
-  "bzr-test-repo": {
-    "type": "bzr",
-    "url": "file://$repo/trunk"
+  "cvs-test-repo": {
+    "type": "cvs",
+    "url": "$repo",
+    "module": "CVSROOT"
   }
 }
 EOF

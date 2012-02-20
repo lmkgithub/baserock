@@ -45,14 +45,20 @@ class Lorry(cliapp.Application):
                              'use DIR as the working area (for holding '
                                 'intermediate git repositories, etc)',
                              metavar='DIR')
-        self.settings.string(['gitorious-base-url'],
-                             'prefix project names with URL when constructing '
-                                'the git URL on Gitorious (default: %default)',
+        self.settings.string(['mirror-base-url-push'],
+                             'base URL to use for pushing to the mirror '
+                             'server (default: %default)',
                              metavar='URL',
-                             default='git@gitorious.org:baserock-morphs')
+                             default='ssh://git@gitorious.org:baserock-morphs')
+        self.settings.string(['mirror-base-url-fetch'],
+                             'base URL to use for bundle names and for '
+                             'pulling from the mirror server (default: '
+                             '%default)',
+                             metavar='URL',
+                             default='git://gitorious.org/baserock-morphs')
         self.settings.boolean(['pull-only'], 
                               'only pull from upstreams, do not push to '
-                                'gitorious')
+                              'the mirror server')
         self.settings.boolean(['verbose', 'v'], 
                               'report what is going on to stdout')
         self.settings.boolean(['repack'], 
@@ -103,8 +109,9 @@ class Lorry(cliapp.Application):
 
     def bundle(self, name, gitdir):
         if self.settings['bundle'] == 'never': return
-        bundlename = "%s/%s" % (self.settings['gitorious-base-url'], name)
-        path = os.path.join(self.settings['bundle-dest'], quote_url(bundlename))
+        bundlename = "%s/%s" % (self.settings['mirror-base-url-fetch'], name)
+        path = os.path.join(self.settings['bundle-dest'],
+                            quote_url(bundlename))
         if not os.path.exists(path) or self.settings['bundle'] == 'always':
             self.progress('.. building bundle %s' % bundlename)
             self.run_program(['git', 'bundle', 'create', path, '--branches',
@@ -134,14 +141,29 @@ class Lorry(cliapp.Application):
                               '--window=250'], cwd=gitdir)
         self.bundle(name, gitdir)
         if not self.settings['pull-only']:
-            self.push_to_gitorious(gitdir)
+            self.push_to_mirror_server(gitdir)
  
-    def add_remote(self, name, gitdir, pushrefspec=['refs/heads/*:refs/heads/*',
-                                                    'refs/tags/*:refs/tags/*']):
-        """Add gitorious as a remote to gitdir with optional refpecs for push"""
-        url = ('%s/%s.git' % (self.settings['gitorious-base-url'], name))
-        self.progress('.. adding %s as a remote to %s' % (url, name))
-        self.run_program(['git', 'remote', 'add', 'gitorious', url], cwd=gitdir)
+    def add_remote(self, name, gitdir,
+                   pushrefspec=['refs/heads/*:refs/heads/*',
+                                'refs/tags/*:refs/tags/*']):
+
+        ''' Add mirror server as a remote to gitdir.
+        
+        Can optionally set up refspecs for pushing.
+        
+        '''
+
+        self.progress('.. adding remote %s to %s' % ('gitorious', name))
+        fetch_url = ('%s/%s.git' %
+                     (self.settings['mirror-base-url-fetch'], name))
+        push_url = ('%s/%s.git' %
+                    (self.settings['mirror-base-url-push'], name))
+        self.progress('.. will fetch from %s and push to %s' %
+                      (fetch_url, push_url))
+        self.run_program(['git', 'remote', 'add', 'gitorious', fetch_url],
+                         cwd=gitdir)
+        self.run_program(['git', 'remote', 'set-url', '--push', 'gitorious',
+                          push_url], cwd=gitdir)
         if len(pushrefspec) >= 1:
             self.run_program(['git', 'config', 'remote.gitorious.push',
                               pushrefspec[0]], cwd=gitdir)

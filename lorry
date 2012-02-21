@@ -324,8 +324,8 @@ class Lorry(cliapp.Application):
             self.add_remote(project_name, gitdir)
             
 
-    def push_to_gitorious(self, gitdir):
-        self.progress('.. pushing to gitorious')
+    def push_to_mirror_server(self, gitdir):
+        self.progress('.. pushing to mirror server')
         self.run_program(['git', 'push', 'gitorious'], cwd=gitdir)
 
     def run_program(self, argv, **kwargs):

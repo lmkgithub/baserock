@@ -1,0 +1,6 @@
+{
+    "binutils": {
+        "type": "bzr",
+        "url": "lp:binutils"
+    }
+}

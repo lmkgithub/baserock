@@ -1,0 +1,6 @@
+{
+    "gcc": {
+        "type": "bzr",
+        "url": "lp:gcc"
+    }
+}

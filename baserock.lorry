@@ -215,6 +215,18 @@
         "url": ":pserver:cvsanon@cvs.maptools.org:/cvs/maptools/cvsroot",
         "module": "libtiff"
     },
+    "ghostscript": {
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/ghostscript.git"
+    },
+    "freetype": {
+        "type": "git",
+        "url": "git://git.savannah.nongnu.org/freetype.git"
+    },
+    "lcms": {
+        "type": "git",
+        "url": "git://github.com/mm2/Little-CMS.git"
+    },
     "netpbm": {
         "type": "svn",
         "url": "http://netpbm.svn.sourceforge.net/svnroot/netpbm",

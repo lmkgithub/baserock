@@ -1,0 +1,6 @@
+{
+    "freetype": {
+        "type": "git",
+        "url": "git://git.savannah.nongnu.org/freetype.git"
+    }
+}

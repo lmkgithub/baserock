@@ -111,7 +111,7 @@ class Lorry(cliapp.Application):
         if self.settings['bundle'] == 'never': return
         bundlename = "%s/%s" % (self.settings['mirror-base-url-fetch'], name)
         path = os.path.join(self.settings['bundle-dest'],
-                            quote_url(bundlename))
+                            quote_url(bundlename)) + '.bndl'
         if not os.path.exists(path) or self.settings['bundle'] == 'always':
             self.progress('.. building bundle %s' % bundlename)
             self.run_program(['git', 'bundle', 'create', path, '--branches',

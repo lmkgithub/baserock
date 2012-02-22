@@ -1,7 +1,0 @@
-{
-    "texinfo": {
-        "type": "cvs",
-        "url": ":pserver:anonymous@cvs.savannah.gnu.org:/sources/texinfo",
-        "module": "texinfo"
-    }
-}

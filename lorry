@@ -72,8 +72,8 @@ class Lorry(cliapp.Application):
                              metavar='FILE', default=None)
         self.settings.choice(['bundle'], ['first', 'never', 'always'],
                              'create bundles of git repositories.'
-                             'first will only bundle if there is not already a '
-                             'bundle in BUNDLES (default: first)')
+                             'first will only bundle if there is not already '
+                             'a bundle in BUNDLES (default: first)')
         self.settings.string(['bundle-dest'],
                              'put created bundles in BUNDLES',
                              metavar='BUNDLES')
@@ -168,8 +168,9 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'config', 'remote.gitorious.push',
                               pushrefspec[0]], cwd=gitdir)
         for refspec in pushrefspec[1:]:
-            self.run_program(['git', 'config', '--add', 'remote.gitorious.push',
-                              refspec], cwd=gitdir)
+            self.run_program(['git', 'config', '--add', 
+                              'remote.gitorious.push', refspec], 
+                             cwd=gitdir)
 
     def mirror_git(self, project_name, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
@@ -220,7 +221,8 @@ class Lorry(cliapp.Application):
             branchdir = os.path.join(bzrdir, branch)
             self.progress('.. fast-exporting branch %s from bzr' % branch)
             exports[branch] = os.path.join(dirname, 'fast-export' + branch)
-            cmdline = ['bzr', 'fast-export', '--git-branch=' + branch, branchdir, exports[branch]]
+            cmdline = ['bzr', 'fast-export', '--git-branch=' + branch, 
+                       branchdir, exports[branch]]
             if os.path.exists(bzrmarks):
                 cmdline.append('--marks=' + bzrmarks)
             else:
@@ -239,7 +241,8 @@ class Lorry(cliapp.Application):
 
         for branch, address in branches.iteritems():
             branchdir = os.path.join(bzrdir, branch)
-            self.progress('.. removing temporary fast-export file ' + exports[branch])
+            self.progress('.. removing temporary fast-export file ' + 
+                            exports[branch])
             os.remove(exports[branch])
 
     def gitify_svn(self, project_name, dirname, gitdir, spec):
@@ -253,16 +256,18 @@ class Lorry(cliapp.Application):
                            "tags": "tags/*",
                            "branches": "branches/*" }
             # init the repo then manually set the refspecs to fetch into local
-            # git-svn can apparently provide better history tracking by fetching
-            # the root of the repository
+            # git-svn can apparently provide better history tracking by
+            # fetching the root of the repository
             # git-svn will convert branch, trunk and tag paths to allow this,
             # but it is simpler to disable it and do it manually
             self.run_program(['git', 'svn', 'init', spec['url'], gitdir,
                               '--svn-remote=svn', '--no-minimize-url'])
             self.run_program(['git', 'config', 'svn-remote.svn.fetch',
-                              layout["trunk"]+':refs/heads/master'], cwd=gitdir)
+                              layout["trunk"]+':refs/heads/master'], 
+                             cwd=gitdir)
             self.run_program(['git', 'config', 'svn-remote.svn.branches',
-                              layout["branches"] + ':refs/heads/*'], cwd=gitdir)
+                              layout["branches"] + ':refs/heads/*'], 
+                             cwd=gitdir)
             self.run_program(['git', 'config', 'svn-remote.svn.tags',
                               layout["tags"] + ':refs/tags/*'],
                              cwd=gitdir)

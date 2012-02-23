@@ -114,8 +114,22 @@ class Lorry(cliapp.Application):
                             quote_url(bundlename)) + '.bndl'
         if not os.path.exists(path) or self.settings['bundle'] == 'always':
             self.progress('.. building bundle %s' % bundlename)
+
+            # create the bundle
             self.run_program(['git', 'bundle', 'create', path, '--branches',
                               '--tags'], cwd=gitdir)
+
+            # FIXME this is a hack to avoid unrecognized headers in bundles,
+            # which happens with some repositories. See 
+            #
+            #   http://marc.info/?l=git&m=132992959317420&w=2
+            #
+            # for more information. From the bundle's header section, the 
+            # expression below will remove all garbage lines that appear 
+            # between the first line (the bundle format meta comment) and 
+            # the list of refs.
+            expr = '1,/^[0-9a-f]\{40\}/{ /^[0-9a-f]\{40\}/!{/^[^#]/d}}'
+            self.run_program(['sed', '-i', '-e', expr, path], cwd=gitdir)
 
     def gitify(self, name, spec):
         self.progress('Getting %s' % name)

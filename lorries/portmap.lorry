@@ -1,0 +1,6 @@
+{
+    "portmap": {
+        "type": "git",
+        "url": "git://neil.brown.name/portmap"
+    }
+}

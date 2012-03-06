@@ -1,5 +1,5 @@
 {
-    "python-coverage": {
+    "python-coveragepy": {
         "type": "hg",
         "url": "https://bitbucket.org/ned/coveragepy"
     }

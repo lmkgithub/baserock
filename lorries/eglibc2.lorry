@@ -1,5 +1,5 @@
 {
-    "eglibc": {
+    "eglibc2": {
         "type": "svn",
         "url": "svn://svn.eglibc.org",
         "layout": "standard"

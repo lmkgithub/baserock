@@ -1,0 +1,6 @@
+{
+    "udev": {
+        "type": "git",
+        "url": "git://git.kernel.org/pub/scm/linux/hotplug/udev.git"
+    }
+}

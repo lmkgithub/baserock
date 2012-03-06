@@ -1,5 +1,5 @@
 {
-    "texlive": {
+    "texlive-source": {
         "type": "svn",
         "url": "svn://tug.org/texlive/",
         "layout": {

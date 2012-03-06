@@ -1,0 +1,6 @@
+{
+    "libtirpc": {
+        "type": "git",
+        "url": "git://git.infradead.org/~steved/libtirpc.git"
+    }
+}

@@ -93,7 +93,7 @@ class Lorry(cliapp.Application):
                 specs = json.load(f)
             for name in sorted(specs.keys()):
                try:
-                    print 'Getting: ',name
+                    self.progress('Getting: %s' % name)
                     self.gitify(name, specs[name])
                except Exception,e:
                     status += 1

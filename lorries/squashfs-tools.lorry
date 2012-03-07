@@ -1,0 +1,6 @@
+{
+    "squashfs-tools": {
+        "type": "git",
+        "url": "git://git.kernel.org/pub/scm/fs/squashfs/squashfs-tools.git"
+    }
+}

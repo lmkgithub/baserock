@@ -1,6 +1,0 @@
-{
-    "ghostscript": {
-        "type": "git",
-        "url": "git://git.savannah.gnu.org/ghostscript.git"
-    }
-}

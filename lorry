@@ -157,9 +157,7 @@ class Lorry(cliapp.Application):
         if not self.settings['pull-only']:
             self.push_to_mirror_server(gitdir)
  
-    def add_remote(self, name, gitdir,
-                   pushrefspec=['refs/heads/*:refs/heads/*',
-                                'refs/tags/*:refs/tags/*']):
+    def add_remote(self, name, gitdir):
 
         ''' Add mirror server as a remote to gitdir.
         
@@ -178,13 +176,6 @@ class Lorry(cliapp.Application):
                          cwd=gitdir)
         self.run_program(['git', 'remote', 'set-url', '--push', 'gitorious',
                           push_url], cwd=gitdir)
-        if len(pushrefspec) >= 1:
-            self.run_program(['git', 'config', 'remote.gitorious.push',
-                              pushrefspec[0]], cwd=gitdir)
-        for refspec in pushrefspec[1:]:
-            self.run_program(['git', 'config', '--add', 
-                              'remote.gitorious.push', refspec], 
-                             cwd=gitdir)
 
     def mirror_git(self, project_name, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
@@ -343,9 +334,11 @@ class Lorry(cliapp.Application):
             self.add_remote(project_name, gitdir)
             
 
-    def push_to_mirror_server(self, gitdir):
+    def push_to_mirror_server(self, gitdir, pushrefspecs=[
+                                              'refs/heads/*:refs/heads/*',
+                                              'refs/tags/*:refs/tags/*']):
         self.progress('.. pushing to mirror server')
-        self.run_program(['git', 'push', 'gitorious'], cwd=gitdir)
+        self.run_program(['git', 'push', 'gitorious']+pushrefspecs, cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         if self.settings['command-stdout']:

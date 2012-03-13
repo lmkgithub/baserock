@@ -31,7 +31,7 @@ cat >"$lorryfile" <<EOF
         "url": "file://$git_upstream",
         "refspecs": [
             "master",
-            "refs/tags/rc*"
+            "refs/tags/rc/*"
         ]
     }
 }
@@ -48,5 +48,5 @@ git init --quiet --bare "$mirror_path"/pushspecs.git
 
 allrefs="$(cd "$mirror_path"/pushspecs.git && git for-each-ref | sort)"
 wantedrefs="$(cd "$mirror_path"/pushspecs.git &&
-              git for-each-ref master 'refs/tags/rc*' | sort)"
+              git for-each-ref refs/heads/master 'refs/tags/rc/*' | sort)"
 test "$allrefs" = "$wantedrefs"

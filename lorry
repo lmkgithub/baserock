@@ -155,7 +155,10 @@ class Lorry(cliapp.Application):
                               '--window=250'], cwd=gitdir)
         self.bundle(name, gitdir)
         if not self.settings['pull-only']:
-            self.push_to_mirror_server(gitdir)
+            if 'refspecs' in spec:
+                self.push_to_mirror_server(gitdir, spec['refspecs'])
+            else:
+                self.push_to_mirror_server(gitdir)
  
     def add_remote(self, name, gitdir):
 

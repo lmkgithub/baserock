@@ -38,7 +38,7 @@ git add newfile.txt
 git commit --quiet -m 'add newfile.txt'
 git checkout master
 git merge topic/newfile
-git tag rc1
+git tag rc/1
 git checkout topic/morelines
 for i in `seq 2 10`; do
     echo line $i >>file.txt
@@ -46,5 +46,5 @@ done
 git commit --quiet -m 'add more lines' file.txt
 git checkout master
 git merge topic/morelines
-git tag rc2
+git tag rc/2
 

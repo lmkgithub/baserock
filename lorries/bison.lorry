@@ -1,6 +1,9 @@
 {
     "bison": {
         "type": "git",
-        "url": "git://git.savannah.gnu.org/bison.git"
+        "url": "git://git.savannah.gnu.org/bison.git",
+        "refspecs": [
+            "master"
+        ]
     }
 }

@@ -3,7 +3,8 @@
         "type": "git",
         "url": "git://git.savannah.gnu.org/bison.git",
         "refspecs": [
-            "master"
+            "master",
+            "refs/tags/*"
         ]
     }
 }

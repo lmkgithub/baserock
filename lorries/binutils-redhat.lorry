@@ -3,7 +3,7 @@
         "type": "git",
         "url": "git://sources.redhat.com/git/binutils.git",
         "refspecs": [
-            "master"
+            "master",
             "binutils-2_10-branch",
             "binutils-2_11-branch",
             "binutils-2_12-branch",

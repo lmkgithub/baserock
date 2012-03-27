@@ -224,7 +224,7 @@ class Lorry(cliapp.Application):
                                  cwd=branchdir)
 
         exports = {}
-        bzrmarks = os.path.join(dirname, 'marks.bzr')
+        bzrmarks = os.path.join(gitdir, '.git', 'marks.bzr')
         for branch, address in branches.iteritems():
             branchdir = os.path.join(bzrdir, branch)
             self.progress('.. fast-exporting branch %s from bzr' % branch)
@@ -237,7 +237,7 @@ class Lorry(cliapp.Application):
                 cmdline.append('--export-marks=' + bzrmarks)
             self.run_program(cmdline)
 
-        gitmarks = os.path.join(dirname, 'marks.git')
+        gitmarks = os.path.join(gitdir, '.git', 'marks.git')
         for branch, address in branches.iteritems():
             self.progress('.. fast-importing branch %s into git' % branch)
             with open(exports[branch], 'rb') as exportfile:

@@ -22,6 +22,8 @@ import os
 import urllib2
 import string
 import sys
+from datetime import datetime
+import shutil
 
 __version__ = '0.0'
 
@@ -148,18 +150,92 @@ class Lorry(cliapp.Application):
         if not os.path.exists(dirname):
             os.mkdir(dirname)
         gitdir = os.path.join(dirname, 'git')
-        table[vcstype](name, dirname, gitdir, spec)
-        if self.settings['repack']:
-            self.progress('.. repacking %s git repository' % name)
-            self.run_program(['git', 'repack', '-a', '-d', '--depth=250',
-                              '--window=250'], cwd=gitdir)
-        self.bundle(name, gitdir)
+        backupdir = self.backup_gitdir(name, dirname, gitdir)
+        try:
+            table[vcstype](name, dirname, gitdir, spec)
+            if self.settings['repack']:
+                self.progress('.. repacking %s git repository' % name)
+                self.run_program(['git', 'repack', '-a', '-d', '--depth=250',
+                                  '--window=250'], cwd=gitdir)
+            self.bundle(name, gitdir)
+        except:
+            if backupdir is not None:
+                faildir = self.save_failgit(name, dirname, gitdir)
+                self.restore_backup(name, dirname, gitdir, backupdir)
+                self.output.write('Mirror of %s failed, state before mirror '
+                                  'is saved at %s and state after mirror is '
+                                  'saved at %s\n' % (name, backupdir, faildir))
+                logging.debug('Mirror of %s failed, state before mirror '
+                              'is saved at %s and state after mirror is '
+                              'saved at %s\n', name, backupdir, faildir)
+            raise
+
         if not self.settings['pull-only']:
             if 'refspecs' in spec:
                 self.push_to_mirror_server(gitdir, spec['refspecs'])
             else:
                 self.push_to_mirror_server(gitdir)
- 
+
+        if backupdir is not None:
+            self.progress('.. removing %s git repository backup' % name)
+            shutil.rmtree(backupdir)
+
+    def restore_backup(self, name, dirname, gitdir, backupdir):
+        self.progress('.. restoring %s good git repository' % name)
+        dotgit = os.path.join(gitdir, '.git')
+        if not os.path.exists(dotgit):
+            dotgit = gitdir
+        shutil.rmtree(dotgit)
+        self.copy_gitdir(backupdir, dotgit)
+
+    def save_failgit(self, name, dirname, gitdir):
+        self.progress('.. saving failed %s mirror git repository' % name)
+        dotgit = os.path.join(gitdir, '.git')
+        if not os.path.exists(dotgit):
+            dotgit = gitdir
+        time = datetime.now().strftime('%F-%T')
+        backupdir = os.path.join(dirname, "git-post-fail-%s" % time)
+        return self.copy_gitdir(dotgit, backupdir)
+
+    def backup_gitdir(self, name, dirname, gitdir):
+        dotgit = os.path.join(gitdir, '.git')
+        if not os.path.exists(dotgit):
+            dotgit = gitdir
+        time = datetime.now().strftime('%F-%T')
+        backupdir = os.path.join(dirname, "git-pre-update-%s" % time)
+        self.progress('.. backing up %s git repository to %s' %
+                      (name, backupdir))
+        return self.copy_gitdir(dotgit, backupdir)
+
+    def copy_gitdir(self, source, dest):
+        if not os.path.exists(source):
+            return None
+
+        # copy everything except the objects dir
+        def ignoreobjects(dirname, filenames):
+            if dirname.endswith(source):
+                return ['objects']
+            return []
+        shutil.copytree(source, dest, ignore=ignoreobjects)
+
+        # hardlink the objects
+        sourceobjects = os.path.join(source, 'objects')
+        assert os.path.exists(sourceobjects), "No source objects"
+        objectspath = os.path.join(dest, 'objects')
+        os.mkdir(objectspath)
+        for dirpath, dirnames, filenames in os.walk(objectspath):
+            assert dirpath.startswith(objectspath)
+            # strip objectspath and / from relpath
+            relpath = dirpath[len(objectspath)+1:]
+            for dirname in dirnames:
+                os.mkdir(os.path.join(dest, relpath, dirname))
+            for filename in filenames:
+                assert os.path.exists(os.path.join(dest, relpath))
+                os.link(os.path.join(dirpath, filename),
+                        os.path.join(dest, relpath, filename))
+        return dest
+
+
     def add_remote(self, name, gitdir):
 
         ''' Add mirror server as a remote to gitdir.

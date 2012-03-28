@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Tests when a git mirror fails that it keeps the backups around
+#
+# Copyright (C) 2012  Codethink Limited
+# 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+
+set -e
+set -o pipefail
+
+
+logfile="$DATADIR/git-backup-test-repo.log"
+workdir="$DATADIR/work-dir"
+repo="$DATADIR/git-backup-test-repo"
+
+normalize() {
+    DATETIMESPEC='[0-9]*-[0-9]*-[0-9]*-[0-9]*:[0-9]*:[0-9]*'
+    sed -r -e "s|git-pre-update-$DATETIMESPEC|git-pre-update-DATETIME|g" \
+           -e "s|git-post-fail-$DATETIMESPEC|git-post-fail-DATETIME|g" \
+           -e "s|$DATADIR|DATADIR|g" "$@"
+}
+
+# mirror some history
+./lorry --pull-only --log="$logfile" --working-area="$workdir" \
+  "$DATADIR/git-backup-test-repo.lorry" | normalize 
+
+# make upstream disappear to cause errors
+rm -rf "$repo"
+if ./lorry --pull-only --log="$logfile" --working-area="$workdir" \
+           "$DATADIR/git-backup-test-repo.lorry" | normalize
+then
+    echo Previous lorry command should have failed >&2
+    exit 1
+else
+    find "$workdir/git-backup-test-repo" | LC_ALL=C sort | normalize
+fi

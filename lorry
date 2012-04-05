@@ -51,7 +51,7 @@ class Lorry(cliapp.Application):
                              'base URL to use for pushing to the mirror '
                              'server (default: %default)',
                              metavar='URL',
-                             default='ssh://git@gitorious.org:baserock-morphs')
+                             default='ssh://git@gitorious.org/baserock-morphs')
         self.settings.string(['mirror-base-url-fetch'],
                              'base URL to use for bundle names and for '
                              'pulling from the mirror server (default: '

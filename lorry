@@ -46,7 +46,7 @@ class Lorry(cliapp.Application):
         self.settings.string(['working-area', 'w'],
                              'use DIR as the working area (for holding '
                                 'intermediate git repositories, etc)',
-                             metavar='DIR')
+                             metavar='DIR', default='workd')
         self.settings.string(['mirror-base-url-push'],
                              'base URL to use for pushing to the mirror '
                              'server (default: %default)',
@@ -83,9 +83,7 @@ class Lorry(cliapp.Application):
     def process_args(self, args):
         status = 0
         
-        if self.settings['working-area'] == '' :
-            print 'No working area defined going to use "workd" directory'
-            self.settings['working-area'] = os.path.abspath('workd')
+        self.settings['working-area'] = os.path.abspath(self.settings['working-area'])
         if not os.path.exists(self.settings['working-area']): 
             os.makedirs(self.settings['working-area'])
 

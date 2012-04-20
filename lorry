@@ -85,7 +85,7 @@ class Lorry(cliapp.Application):
         
         if self.settings['working-area'] == '' :
             print 'No working area defined going to use "workd" directory'
-            self.settings['working-area'] = 'workd'
+            self.settings['working-area'] = os.path.abspath('workd')
         if not os.path.exists(self.settings['working-area']): 
             os.makedirs(self.settings['working-area'])
 

@@ -1,0 +1,7 @@
+{
+    "docbook-xsl": {
+        "type": "svn",
+        "url": "https://docbook.svn.sourceforge.net/svnroot/docbook/trunk/xsl",
+        "layout": "standard"
+    }
+}

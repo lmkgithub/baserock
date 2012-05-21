@@ -1,6 +1,0 @@
-{
-    "fakeroot": {
-        "type": "git",
-        "url": "git://git.debian.org/git/users/clint/fakeroot.git"
-    }
-}

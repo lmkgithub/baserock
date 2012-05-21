@@ -1,6 +1,0 @@
-{
-    "psmisc": {
-        "type": "git",
-        "url": "git://psmisc.git.sourceforge.net/gitroot/psmisc/psmisc"
-    }
-}

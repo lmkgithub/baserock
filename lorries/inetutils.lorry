@@ -1,6 +1,0 @@
-{
-    "inetutils": {
-        "type": "git",
-        "url": "git://git.savannah.gnu.org/inetutils.git"
-    }
-}

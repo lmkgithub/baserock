@@ -1,6 +1,0 @@
-{
-    "sudo": {
-        "type": "hg",
-        "url": "http://www.sudo.ws/repos/sudo"
-    }
-}

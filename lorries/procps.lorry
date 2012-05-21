@@ -1,7 +1,0 @@
-{
-    "procps": {
-        "type": "cvs",
-        "url": ":pserver:anonymous@procps.cvs.sourceforge.net:/cvsroot/procps",
-        "module": "procps"
-    }
-}

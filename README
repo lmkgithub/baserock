@@ -12,7 +12,10 @@ then you're not dangerous.)
 
 See the manual page for instructions on using.
 
-`baserock.lorry` is the file used by Lars to keep Baserock updated.
+The usual use is that a server hosts lorry and checks for updates,
+which it then lorries. Lorry should not generally be run from the
+developer's machine apart from testing. This is because Lorry has to
+keep the git trees to avoid it having to pull everything.
 
 
 Implementation
@@ -186,7 +189,7 @@ often have the folder name as the first component.
     }
 }
 
-NOTE: tarball imports may not give the same sha.
+NOTE: tarball imports are unlikely to give the same sha.
 
 Legal stuff
 -----------

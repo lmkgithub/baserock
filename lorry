@@ -240,7 +240,9 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'clone', '--mirror', spec['url'], gitdir])
         else:
             self.progress('.. updating existing clone')
-            self.run_program(['git', 'fetch', 'origin'], cwd=gitdir)
+            self.run_program(['git', 'fetch', spec['url'],
+                              'refs/heads/*:refs/heads/*',
+                              'refs/tags/*:refs/tags/*'], cwd=gitdir)
 
     def gitify_bzr(self, project_name, dirname, gitdir, spec):
         bzrdir = os.path.join(dirname, 'bzr')

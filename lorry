@@ -414,8 +414,11 @@ class Lorry(cliapp.Application):
     def push_to_mirror_server(self, gitdir, pushrefspecs=[
                                               'refs/heads/*:refs/heads/*',
                                               'refs/tags/*:refs/tags/*']):
-        self.progress('.. pushing to mirror server')
-        self.run_program(['git', 'push', 'gitorious']+pushrefspecs, cwd=gitdir)
+        self.progress('.. pushing to mirror server %s' %
+                      self.settings['mirror-base-url-push'])
+        self.run_program(['git', 'push',
+                          self.settings['mirror-base-url-push']]+pushrefspecs,
+                         cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         if self.settings['command-stdout']:

@@ -170,9 +170,9 @@ class Lorry(cliapp.Application):
 
         if not self.settings['pull-only']:
             if 'refspecs' in spec:
-                self.push_to_mirror_server(gitdir, spec['refspecs'])
+                self.push_to_mirror_server(name, gitdir, spec['refspecs'])
             else:
-                self.push_to_mirror_server(gitdir)
+                self.push_to_mirror_server(name, gitdir)
 
         if backupdir is not None:
             self.progress('.. removing %s git repository backup' % name)
@@ -382,14 +382,12 @@ class Lorry(cliapp.Application):
                              cwd=gitdir)
             
 
-    def push_to_mirror_server(self, gitdir, pushrefspecs=[
-                                              'refs/heads/*:refs/heads/*',
-                                              'refs/tags/*:refs/tags/*']):
-        self.progress('.. pushing to mirror server %s' %
-                      self.settings['mirror-base-url-push'])
-        self.run_program(['git', 'push',
-                          self.settings['mirror-base-url-push']]+pushrefspecs,
-                         cwd=gitdir)
+    def push_to_mirror_server(self, name, gitdir,
+                              pushrefspecs=['refs/heads/*:refs/heads/*',
+                                            'refs/tags/*:refs/tags/*']):
+        pushurl = "%s/%s.git" % (self.settings['mirror-base-url-push'], name)
+        self.progress('.. pushing %s to mirror server %s' % (name, pushurl))
+        self.run_program(['git', 'push', pushurl]+pushrefspecs, cwd=gitdir)
 
     def run_program(self, argv, **kwargs):
         if self.settings['command-stdout']:

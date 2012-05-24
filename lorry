@@ -234,32 +234,10 @@ class Lorry(cliapp.Application):
         return dest
 
 
-    def add_remote(self, name, gitdir):
-
-        ''' Add mirror server as a remote to gitdir.
-        
-        Can optionally set up refspecs for pushing.
-        
-        '''
-
-        self.progress('.. adding remote %s to %s' % ('gitorious', name))
-        fetch_url = ('%s/%s.git' %
-                     (self.settings['mirror-base-url-fetch'], name))
-        push_url = ('%s/%s.git' %
-                    (self.settings['mirror-base-url-push'], name))
-        self.progress('.. will fetch from %s and push to %s' %
-                      (fetch_url, push_url))
-        self.run_program(['git', 'remote', 'add', 'gitorious', fetch_url],
-                         cwd=gitdir)
-        self.run_program(['git', 'remote', 'set-url', '--push', 'gitorious',
-                          push_url], cwd=gitdir)
-
     def mirror_git(self, project_name, dirname, gitdir, spec):
         if not os.path.exists(gitdir):
             self.progress('.. doing initial clone')
             self.run_program(['git', 'clone', '--mirror', spec['url'], gitdir])
-            # init gitorious remote
-            self.add_remote(project_name, gitdir)
         else:
             self.progress('.. updating existing clone')
             self.run_program(['git', 'fetch', 'origin'], cwd=gitdir)
@@ -275,7 +253,6 @@ class Lorry(cliapp.Application):
             self.progress('.. creating git repo')
             os.mkdir(gitdir)
             self.run_program(['git', 'init', gitdir])
-            self.add_remote(project_name, gitdir)
 
         # branches are the listed branches, plus the branch specified in url
         if 'branches' in spec:
@@ -353,7 +330,6 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'config', 'svn-remote.svn.tags',
                               layout["tags"] + ':refs/tags/*'],
                              cwd=gitdir)
-            self.add_remote(project_name, gitdir)
         else:
             self.progress('.. updating existing clone')
         # update the remote tracking branches
@@ -362,9 +338,6 @@ class Lorry(cliapp.Application):
     def gitify_cvs(self, project_name, dirname, gitdir, spec):
         self.run_program(['git', 'cvsimport', '-a', '-d', spec['url'],
                           '-C', gitdir, spec['module']])
-        out = self.run_program(['git', 'remote'], cwd=gitdir)
-        if 'gitorious' not in out.splitlines():
-            self.add_remote(project_name, gitdir)
 
     def gitify_hg(self, project_name, dirname, gitdir, spec):
         hgdir = os.path.join(dirname, 'hg')
@@ -377,7 +350,6 @@ class Lorry(cliapp.Application):
 
         if not os.path.exists(gitdir):
             self.run_program(['git', 'init', gitdir])
-            self.add_remote(project_name, gitdir)
         
         self.progress('.. fast-exporting into git')
         self.run_program(['hg-fast-export', '--quiet', '-r', '../hg'], 
@@ -408,7 +380,6 @@ class Lorry(cliapp.Application):
             self.run_program(['git', 'add', '.'], cwd=gitdir)
             self.run_program(['git', 'commit', '-m', 'Tarball conversion'],
                              cwd=gitdir)
-            self.add_remote(project_name, gitdir)
             
 
     def push_to_mirror_server(self, gitdir, pushrefspecs=[

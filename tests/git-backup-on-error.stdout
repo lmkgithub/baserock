@@ -1,5 +1,5 @@
 Mirror of git-backup-test-repo failed, state before mirror is saved at DATADIR/work-dir/git-backup-test-repo/git-pre-update-DATETIME and state after mirror is saved at DATADIR/work-dir/git-backup-test-repo/git-post-fail-DATETIME
-Exception: git fetch file://DATADIR/git-backup-test-repo refs/heads/*:refs/heads/* refs/tags/*:refs/tags/* failed (exit code 128):
+Exception: git fetch file://DATADIR/git-backup-test-repo +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/* failed (exit code 128):
     fatal: 'DATADIR/git-backup-test-repo' does not appear to be a git repository
     fatal: The remote end hung up unexpectedly
 

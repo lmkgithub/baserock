@@ -51,13 +51,13 @@ class Lorry(cliapp.Application):
                              'base URL to use for pushing to the mirror '
                              'server (default: %default)',
                              metavar='URL',
-                             default='ssh://git@gitorious.org/baserock-morphs')
+                             default='ssh://gitano@roadtrain.codethink.co.uk/delta')
         self.settings.string(['mirror-base-url-fetch'],
                              'base URL to use for bundle names and for '
                              'pulling from the mirror server (default: '
                              '%default)',
                              metavar='URL',
-                             default='git://gitorious.org/baserock-morphs')
+                             default='git://roadtrain.codethink.co.uk/delta')
         self.settings.boolean(['pull-only'], 
                               'only pull from upstreams, do not push to '
                               'the mirror server')

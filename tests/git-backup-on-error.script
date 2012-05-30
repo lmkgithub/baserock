@@ -34,13 +34,13 @@ normalize() {
 }
 
 # mirror some history
-./lorry --pull-only --log="$logfile" --working-area="$workdir" \
+./lorry --pull-only --log="$logfile" --working-area="$workdir" --bundle=never \
   "$DATADIR/git-backup-test-repo.lorry" | normalize 
 
 # make upstream disappear to cause errors
 rm -rf "$repo"
 if ./lorry --pull-only --log="$logfile" --working-area="$workdir" \
-           "$DATADIR/git-backup-test-repo.lorry" | normalize
+           "$DATADIR/git-backup-test-repo.lorry" --bundle=never | normalize
 then
     echo Previous lorry command should have failed >&2
     exit 1

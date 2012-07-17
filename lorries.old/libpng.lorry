@@ -1,6 +1,0 @@
-{
-    "libpng": {
-        "type": "git",
-        "url": "git://libpng.git.sourceforge.net/gitroot/libpng/libpng"
-    }
-}

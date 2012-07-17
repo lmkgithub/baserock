@@ -1,5 +1,5 @@
 {
-    "gnome-common": {
+    "shared-mime-info": {
         "type": "git",
         "url": "git://git.gnome.org/gnome-common"
     }

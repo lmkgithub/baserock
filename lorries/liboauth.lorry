@@ -1,0 +1,7 @@
+{
+    "liboauth": {
+        "type": "svn",
+        "url": "https://liboauth.svn.sorceforge.net/svnroot/liboauth",
+        "layout": "standard"
+    }
+}

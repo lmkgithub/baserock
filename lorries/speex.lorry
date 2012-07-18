@@ -1,0 +1,11 @@
+{
+    "speex": {
+        "type": "svn",
+        "url": "http://svn.xiph.org/",
+        "layout": {
+            "trunk": "trunk/speex",
+            "tags": "tags/speex-tags/*",
+            "branches": "branches/speex-branches/*"
+        } 
+    }
+}

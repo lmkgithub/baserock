@@ -1,7 +1,8 @@
 {
     "liboauth": {
-        "type": "svn",
-        "url": "http://liboauth.svn.sourceforge.net/svnroot/liboauth",
-        "layout": "standard"
+        "type": "tarball",
+        "compression": "gzip",
+        "strip": 1,
+        "url": "http://downloads.sourceforge.net/liboauth/liboauth-0.9.7.tar.gz"
     }
 }

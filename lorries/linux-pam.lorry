@@ -1,0 +1,6 @@
+{
+    "linux-pam": {
+        "type": "git",
+        "url": "git://git.fedorahosted.org/linux-pam"
+    }
+}

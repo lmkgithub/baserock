@@ -1,5 +1,5 @@
 {
-    "zip": {
+    "check": {
         "type": "tarball",
         "compression": "gzip",
         "strip": 1,

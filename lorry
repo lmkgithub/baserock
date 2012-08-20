@@ -57,7 +57,7 @@ class Lorry(cliapp.Application):
                              'pulling from the mirror server (default: '
                              '%default)',
                              metavar='URL',
-                             default='git://roadtrain.codethink.co.uk/delta')
+                             default='git://git.baserock.org/delta')
         self.settings.boolean(['pull-only'], 
                               'only pull from upstreams, do not push to '
                               'the mirror server')

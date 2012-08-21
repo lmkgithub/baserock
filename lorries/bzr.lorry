@@ -1,0 +1,6 @@
+{
+    "bzr": {
+        "type": "bzr",
+        "url": "lp:bzr"
+    }
+}

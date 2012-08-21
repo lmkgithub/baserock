@@ -1,0 +1,6 @@
+{
+    "mercurial": {
+        "type": "hg",
+        "url": "http://selenic.com/hg"
+    }
+}

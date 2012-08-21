@@ -1,0 +1,6 @@
+{
+    "supple": {
+        "type": "git",
+        "url": "git://git.gitano.org.uk/supple.git"
+    }
+}

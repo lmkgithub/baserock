@@ -1,0 +1,7 @@
+{
+    "cvs": {
+        "type": "cvs",
+        "url": ":pserver:anonymous@cvs.savannah.nongnu.org:/sources/cvs",
+        "module": "ccvs"
+    }
+}

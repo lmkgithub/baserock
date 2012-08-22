@@ -1,6 +1,8 @@
 {
     "bzr": {
         "type": "bzr",
-        "url": "lp:bzr"
+        "branches": {
+            "trunk": "lp:bzr/trunk"
+        }
     }
 }

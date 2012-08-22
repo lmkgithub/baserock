@@ -1,7 +1,7 @@
 {
-    "libyaml" : {
-        "type": "svn"
-        "url": "http://svn.pyyaml.org/libyaml"
+    "libyaml": {
+        "type": "svn",
+        "url": "http://svn.pyyaml.org/libyaml",
         "layout": "standard"
     }
 }

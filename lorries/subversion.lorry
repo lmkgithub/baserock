@@ -1,7 +1,6 @@
 {
     "subversion": {
-        "type": "svn",
-        "url": "https://svn.apache.org/repos/asf/subversion/",
-        "layout": "standard"
+        "type": "bzr",
+        "url": "lp:subversion"
     }
 }

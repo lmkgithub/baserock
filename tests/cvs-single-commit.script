@@ -23,6 +23,11 @@ set -e
 logfile="$DATADIR/cvs-test-repo.log"
 workdir="$DATADIR/work-dir"
 
+# CVS wants $USER, $LOGNAME, and $LOGNAME set to a real username.
+export USER=root
+export LOGNAME=$USER
+export USERNAME=$USER
+
 ./lorry --pull-only --log="$logfile" --working-area="$workdir" \
   "$DATADIR/cvs-test-repo.lorry" > /dev/null 2> /dev/null
 
@@ -30,12 +35,12 @@ workdir="$DATADIR/work-dir"
 (
   cd "$workdir/cvs-test-repo/git/"
 
-  # list the branches
-  git show-ref | cut -d' ' -f2
+  echo "branches:"
+  git show-ref | cut -d' ' -f2 | LC_ALL=C sort
 
-  # cat the test file
+  echo "test file:"
   git cat-file blob master:test.txt
 
-  # list the commit messages
+  echo "commit messages:"
   git log --pretty='%s' master
 )

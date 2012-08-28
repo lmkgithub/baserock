@@ -1,0 +1,8 @@
+{
+    "libserf": {
+        "type": "svn",
+        "url": "http://serf.googlecode.com/svn/trunk/"
+        "layout": "standard"
+    }
+}
+

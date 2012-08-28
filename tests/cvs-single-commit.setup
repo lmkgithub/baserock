@@ -20,6 +20,11 @@
 
 set -e
 
+# CVS wants $USER, $LOGNAME, and $LOGNAME set to a real username.
+export USER=root
+export LOGNAME=$USER
+export USERNAME=$USER
+
 # create the repository
 repo="$DATADIR/cvs-test-repo"
 export CVSROOT="$repo"

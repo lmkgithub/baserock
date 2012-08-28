@@ -2,6 +2,7 @@
     "name": "lorry",
     "kind": "chunk",
     "build-commands": [
+        "git branch -a",
         "bzr whoami 'Lorry test suite <baserock-dev@baserock.org>'",
         "python setup.py check",
         "python setup.py build"

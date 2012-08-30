@@ -1,9 +1,5 @@
 {
     "name": "lorry",
     "kind": "chunk",
-    "build-commands": [
-        "bzr whoami 'Lorry test suite <baserock-dev@baserock.org>'",
-        "echo disabled because cvs does not like root: python setup.py check",
-        "python setup.py build"
-    ]
+    "build-system": "python-distutils"
 }

@@ -1,5 +1,5 @@
 {
-    "lorry": {
+    "lsof": {
         "type": "tarball",
         "compression": "gzip",
         "strip": 1,

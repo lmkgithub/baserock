@@ -1,6 +1,6 @@
 {
     "gnutls": {
         "type": "git",
-        "url": "git://git.savannah.gnu.org/gnutls"
+        "url": "git://git.savannah.gnu.org/gnutls.git"
     }
 }

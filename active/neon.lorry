@@ -1,8 +1,7 @@
 {
     "neon": {
-        "type": "tarball",
-        "compression": "gzip",
-        "strip": 1,
-        "url": "http://www.webdav.org/neon/neon-0.29.6.tar.gz"
+        "type": "svn",
+        "url": "http://svn.webdav.org/repos/projects/neon/",
+        "layout": "standard"
     }
 }

@@ -1,0 +1,7 @@
+{
+    "llvm": {
+        "type": "svn",
+        "url": "http://llvm.org/svn/llvm-project/llvm/trunk",
+        "layout": "standard"
+    }
+}

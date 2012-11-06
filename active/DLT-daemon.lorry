@@ -1,8 +1,6 @@
 {
     "DLT-daemon": {
         "type": "git",
-        "url": "http://git.projects.genivi.org/dlt-daemon.git",
-        "refspecs": [
-            "master"
-        ]
+        "url": "http://git.projects.genivi.org/dlt-daemon.git"
+    }
 }

@@ -1,7 +1,7 @@
 {
     "classpath": {
         "type": "cvs",
-        "url": ":pserver:nonymous@cvs.savannah.gnu.org:/sources/classpath",
+        "url": ":pserver:anonymous@cvs.savannah.gnu.org:/sources/classpath",
         "module": "classpath"
     }
 }

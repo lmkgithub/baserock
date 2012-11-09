@@ -1,0 +1,7 @@
+{
+    "classpath": {
+        "type": "cvs",
+        "url": "anonymous@cvs.savannah.gnu.org:/sources/classpath",
+        "module": "classpath"
+    }
+}

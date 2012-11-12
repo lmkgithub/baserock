@@ -1,7 +1,6 @@
 {
     "classpath": {
-        "type": "cvs",
-        "url": ":pserver:anonymous@cvs.savannah.gnu.org:/sources/classpath",
-        "module": "classpath"
+        "type": "git",
+        "url": "git://git.savannah.gnu.org/classpath.git"
     }
 }
